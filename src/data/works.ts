@@ -11,10 +11,25 @@
  *   { id: 'my-work', ..., image: myWork }
  */
 
-import cutToFit from '../assets/featuredWorks/cutToFit.JPG'
-import holdingItIn from '../assets/featuredWorks/holdingItIn.JPG'
+import cutToFit from '../assets/different/cutToFit/cutToFit.JPG'
+import cutToFit01 from '../assets/different/cutToFit/01.JPG'
+import cutToFit02 from '../assets/different/cutToFit/02.JPG'
+import cutToFit03 from '../assets/different/cutToFit/03.JPG'
+import holdingItIn from '../assets/different/holdingItIn/holdingItIn.JPG'
+import holdingItIn01 from '../assets/different/holdingItIn/01.JPG'
+import holdingItIn02 from '../assets/different/holdingItIn/02.JPG'
+import holdingItIn03 from '../assets/different/holdingItIn/03.JPG'
 import stillDesired from '../assets/theErrorOfTheBeautiful/01_stillDesired.JPG'
+import stillDesired01 from '../assets/theErrorOfTheBeautiful/stillDesired/01.JPG'
+import stillDesired02 from '../assets/theErrorOfTheBeautiful/stillDesired/02.JPG'
+import stillDesired03 from '../assets/theErrorOfTheBeautiful/stillDesired/03.JPG'
 import lovedInPieces from '../assets/theErrorOfTheBeautiful/02_LovedInPieces.JPG'
+import lovedInPieces01 from '../assets/theErrorOfTheBeautiful/lovedInPieces/01.JPG'
+import lovedInPieces02 from '../assets/theErrorOfTheBeautiful/lovedInPieces/02.JPG'
+import lovedInPieces03 from '../assets/theErrorOfTheBeautiful/lovedInPieces/03.JPG'
+import stackOfThoughts from '../assets/developerState/01_stackOfThoughts.JPG'
+import mergeConflict from '../assets/developerState/02_mergeConflict.JPG'
+import developerStateWork from '../assets/developerState/03_DeveloperState.JPG'
 
 export type WorkStatus = 'available' | 'sold' | 'reserved'
 
@@ -36,6 +51,10 @@ export type Work = {
   seriesId: string | null
   /** Импортированное изображение (см. комментарий выше) */
   image?: string
+  /** Доп. кадры для галереи на странице работы (кроме основного image) */
+  galleryImages?: string[]
+  /** Текст для блока / аккордеона «О работе» */
+  description?: string
   /** Показывать в блоке «Избранные работы» на главной */
   featured?: boolean
 }
@@ -52,6 +71,9 @@ export const works: Work[] = [
     status: 'available',
     seriesId: 'the-error-of-being-beautiful',
     image: stillDesired,
+    galleryImages: [stillDesired01, stillDesired02, stillDesired03],
+    description:
+      'Портрет о желании остаться желанной даже тогда, когда образ уже трещит под чужими ожиданиями. Красота ещё держится, но система уже начинает читать её с ошибкой.',
     featured: false,
   },
   {
@@ -65,6 +87,9 @@ export const works: Work[] = [
     status: 'available',
     seriesId: 'the-error-of-being-beautiful',
     image: lovedInPieces,
+    galleryImages: [lovedInPieces01, lovedInPieces02, lovedInPieces03],
+    description:
+      'Любовь, собранная из фрагментов: лицо ещё узнаваемо, но уже разрезано чужими правилами. Работа о том, как принимают по частям — и теряют целое.',
     featured: false,
   },
   {
@@ -78,6 +103,9 @@ export const works: Work[] = [
     status: 'available',
     seriesId: null,
     image: cutToFit,
+    galleryImages: [cutToFit01, cutToFit02, cutToFit03],
+    description:
+      'О попытке вписаться в чужую форму: обрезать лишнее, подогнать края, стать удобной. Картина фиксирует момент, когда подгонка уже заметнее самого человека.',
     featured: true,
   },
   {
@@ -91,7 +119,52 @@ export const works: Work[] = [
     status: 'available',
     seriesId: null,
     image: holdingItIn,
+    galleryImages: [holdingItIn01, holdingItIn02, holdingItIn03],
+    description:
+      'О сдержанности, которая уже почти не держится. Внутри накопилось слишком много — снаружи остаётся только напряжение линии и взгляда.',
     featured: true,
+  },
+  {
+    id: 'stack-of-thoughts',
+    index: '05',
+    title: 'Stack Of Thoughts',
+    year: 2026,
+    size: '50 × 100 см',
+    medium: 'Холст, масло',
+    price: 85000,
+    status: 'available',
+    seriesId: 'developer-state',
+    image: stackOfThoughts,
+    description:
+      'Мысли укладываются слоями, как стек вызовов: каждое новое состояние опирается на предыдущее. Портрет о перегруженном внимании и привычке держать всё в голове.',
+  },
+  {
+    id: 'merge-conflict',
+    index: '06',
+    title: 'Merge Conflict',
+    year: 2026,
+    size: '50 × 100 см',
+    medium: 'Холст, масло',
+    price: 85000,
+    status: 'available',
+    seriesId: 'developer-state',
+    image: mergeConflict,
+    description:
+      'Две версии одного человека не сходятся в одну. Конфликт слияния — когда внутренние правки противоречат друг другу, и система отказывается выбрать «правильную».',
+  },
+  {
+    id: 'developer-state',
+    index: '07',
+    title: 'Developer State',
+    year: 2026,
+    size: '50 × 100 см',
+    medium: 'Холст, масло',
+    price: 85000,
+    status: 'available',
+    seriesId: 'developer-state',
+    image: developerStateWork,
+    description:
+      'Состояние, в котором профессия уже стала способом видеть мир: через состояния, ошибки и системы. Финальный портрет серии о взгляде разработчика.',
   },
 ]
 
@@ -103,6 +176,18 @@ export const workStatusLabel: Record<WorkStatus, string> = {
 
 export function getWorkById(id: string): Work | undefined {
   return works.find((work) => work.id === id)
+}
+
+export function getWorksBySeriesId(seriesId: string): Work[] {
+  return works.filter((work) => work.seriesId === seriesId)
+}
+
+/** Основное изображение + доп. кадры для галереи */
+export function getWorkGallery(work: Work): string[] {
+  const images = [work.image, ...(work.galleryImages ?? [])].filter(
+    (src): src is string => Boolean(src),
+  )
+  return [...new Set(images)]
 }
 
 export function workPath(id: string): string {

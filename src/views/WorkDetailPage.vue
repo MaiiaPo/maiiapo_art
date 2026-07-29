@@ -1,34 +1,39 @@
 <template>
   <section v-if="work" class="work-detail">
-    <p class="work-detail__index">[ {{ work.index }} ]</p>
-    <h1 class="work-detail__title">{{ work.title }}</h1>
+    <div class="work-detail__inner">
+      <RouterLink class="work-detail__back" :to="backLink.to">
+        ← {{ backLink.label }}
+      </RouterLink>
 
-    <div class="work-detail__layout">
-      <div class="work-detail__media">
-        <img
-          v-if="work.image"
-          class="work-detail__img"
-          :src="work.image"
-          :alt="work.title"
-        />
-        <div v-else class="work-detail__placeholder" aria-hidden="true" />
+      <div class="work-detail__main">
+        <WorkInfo :work="work" />
+        <WorkGallery :images="gallery" :alt="work.title" />
       </div>
 
-      <div class="work-detail__info">
-        <p>{{ work.year }}</p>
-        <p>{{ work.medium }}</p>
-        <p>{{ work.size }}</p>
-        <p>{{ workStatusLabel[work.status] }}</p>
-        <p v-if="work.status !== 'sold'" class="work-detail__price">
-          {{ formatPrice(work.price) }}
-        </p>
-      </div>
+      <WorkSeriesBlock
+        v-if="series"
+        :series="series"
+        :current-work-id="work.id"
+      />
+
+      <section
+        v-else-if="work.description"
+        class="work-detail__about"
+        aria-labelledby="work-about-title"
+      >
+        <h2 id="work-about-title" class="work-detail__about-title">О работе</h2>
+        <p class="work-detail__about-text">{{ work.description }}</p>
+      </section>
+
+      <WorkSeriesOthers
+        v-if="series"
+        :series-id="series.id"
+        :current-work-id="work.id"
+      />
     </div>
-
-    <RouterLink class="work-detail__back" to="/works">← Все работы</RouterLink>
   </section>
 
-  <section v-else class="work-detail">
+  <section v-else class="work-detail work-detail--empty">
     <h1>Работа не найдена</h1>
     <RouterLink to="/works">← Все работы</RouterLink>
   </section>
@@ -37,11 +42,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import {
-  formatPrice,
-  getWorkById,
-  workStatusLabel,
-} from '../data/works'
+import WorkGallery from '../components/works/WorkGallery.vue'
+import WorkInfo from '../components/works/WorkInfo.vue'
+import WorkSeriesBlock from '../components/works/WorkSeriesBlock.vue'
+import WorkSeriesOthers from '../components/works/WorkSeriesOthers.vue'
+import { getSeriesById, seriesPath } from '../data/series'
+import { getWorkById, getWorkGallery } from '../data/works'
 
 const route = useRoute()
 
@@ -49,67 +55,44 @@ const work = computed(() => {
   const id = route.params.id
   return typeof id === 'string' ? getWorkById(id) : undefined
 })
+
+const series = computed(() => {
+  const seriesId = work.value?.seriesId
+  return seriesId ? getSeriesById(seriesId) : undefined
+})
+
+const gallery = computed(() => (work.value ? getWorkGallery(work.value) : []))
+
+const backLink = computed(() => {
+  if (series.value) {
+    return {
+      to: seriesPath(series.value.id),
+      label: 'к работам серии',
+    }
+  }
+
+  return {
+    to: '/works',
+    label: 'к работам',
+  }
+})
 </script>
 
 <style scoped>
 .work-detail {
-  padding: 64px 40px;
+  padding: 40px 40px 80px;
 }
 
-.work-detail__index {
-  margin: 0 0 8px;
-  font-size: 13px;
-  color: #777;
-}
-
-.work-detail__title {
-  margin: 0 0 36px;
-  font-family: "Oswald", sans-serif;
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.work-detail__layout {
-  display: grid;
-  grid-template-columns: minmax(200px, 360px) minmax(0, 1fr);
-  gap: 32px;
-  margin-bottom: 40px;
-}
-
-.work-detail__img,
-.work-detail__placeholder {
-  display: block;
-  aspect-ratio: 1 / 2;
-  width: 100%;
-}
-
-.work-detail__img {
-  object-fit: contain;
-  background: #ececec;
-}
-
-.work-detail__placeholder {
-  background: linear-gradient(160deg, #dcdcdc 0%, #c4c4c4 55%, #b0b0b0 100%);
-}
-
-.work-detail__info {
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-.work-detail__info p {
-  margin: 0;
-}
-
-.work-detail__price {
-  margin-top: 12px !important;
-  font-size: 20px;
-  font-weight: 600;
+.work-detail__inner {
+  max-width: 1180px;
+  margin-inline: auto;
 }
 
 .work-detail__back {
+  display: inline-block;
+  margin-bottom: 28px;
   color: inherit;
+  font-size: 14px;
   text-decoration: none;
 }
 
@@ -117,13 +100,54 @@ const work = computed(() => {
   opacity: 0.6;
 }
 
+.work-detail__main {
+  display: grid;
+  grid-template-columns: minmax(240px, 340px) minmax(0, 1fr);
+  gap: 48px 64px;
+  align-items: start;
+  margin-bottom: 48px;
+}
+
+.work-detail__about {
+  padding: 36px 0 8px;
+  border-top: 1px solid #ddd;
+}
+
+.work-detail__about-title {
+  margin: 0 0 16px;
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.work-detail__about-text {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.work-detail--empty {
+  display: grid;
+  gap: 16px;
+}
+
+.work-detail--empty a {
+  color: inherit;
+  text-decoration: none;
+}
+
 @media (max-width: 900px) {
   .work-detail {
-    padding: 40px 20px;
+    padding: 28px 20px 56px;
   }
 
-  .work-detail__layout {
+  .work-detail__main {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 </style>

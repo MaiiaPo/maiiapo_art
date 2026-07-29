@@ -23,7 +23,7 @@
       >
         {{ workStatusLabel[work.status] }}
       </p>
-      <p v-if="work.status !== 'sold'" class="work-card__price">
+      <p v-if="work.status !== 'sold' && work.price > 0" class="work-card__price">
         {{ formatPrice(work.price) }}
       </p>
     </div>
@@ -104,7 +104,7 @@ defineProps<{
 }
 
 .work-card__status--available {
-  color: #1a7a4c;
+  color: #d51d78;
 }
 
 .work-card__status--sold {

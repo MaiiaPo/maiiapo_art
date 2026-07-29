@@ -17,17 +17,7 @@
           :src="current.image"
           :alt="current.title"
         />
-        <!-- TODO: изображение отдельной картины -->
         <div v-else class="spotlight__placeholder" aria-hidden="true" />
-      </div>
-
-      <div class="spotlight__loader" aria-hidden="true">
-        <p class="spotlight__loader-title">Loading...</p>
-        <div class="spotlight__bar">
-          <span class="spotlight__bar-fill" />
-        </div>
-        <p class="spotlight__loader-value">99%</p>
-        <p class="spotlight__loader-note">Осталось неизвестно</p>
       </div>
     </div>
   </section>
@@ -124,67 +114,30 @@ onUnmounted(() => {
 }
 
 .spotlight__visual {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 28px;
-  align-items: stretch;
   min-width: 0;
 }
 
 .spotlight__image {
-  min-width: 0;
+  width: 100%;
+  max-width: 360px;
+  height: clamp(420px, 58vh, 560px);
+  background: #111;
 }
 
 .spotlight__img,
 .spotlight__placeholder {
   display: block;
-  aspect-ratio: 1 / 1;
   width: 100%;
-  max-width: 480px;
+  height: 100%;
 }
 
 .spotlight__img {
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .spotlight__placeholder {
   background: linear-gradient(160deg, #3a3a3a 0%, #2a2a2a 55%, #1f1f1f 100%);
-}
-
-.spotlight__loader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 220px;
-  padding: 8px 0;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-}
-
-.spotlight__loader-title,
-.spotlight__loader-value,
-.spotlight__loader-note {
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #9a9a9a;
-}
-
-.spotlight__bar {
-  width: 10px;
-  flex: 1;
-  margin: 16px 0;
-  border: 1px solid #666;
-  padding: 2px;
-}
-
-.spotlight__bar-fill {
-  display: block;
-  width: 100%;
-  height: 99%;
-  background: #18d6cf;
 }
 
 @media (max-width: 900px) {
@@ -192,36 +145,6 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
     gap: 40px;
     padding: 48px 20px;
-  }
-
-  .spotlight__visual {
-    grid-template-columns: 1fr auto;
-  }
-}
-
-@media (max-width: 560px) {
-  .spotlight__visual {
-    grid-template-columns: 1fr;
-  }
-
-  .spotlight__loader {
-    writing-mode: horizontal-tb;
-    transform: none;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    min-height: auto;
-  }
-
-  .spotlight__bar {
-    width: 100%;
-    height: 10px;
-    margin: 0;
-  }
-
-  .spotlight__bar-fill {
-    width: 99%;
-    height: 100%;
   }
 }
 </style>
