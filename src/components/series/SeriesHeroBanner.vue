@@ -5,7 +5,7 @@
       <h1 class="series-hero__title">{{ series.title }}</h1>
       <p class="series-hero__description">{{ series.description }}</p>
       <p class="series-hero__meta">
-        {{ formatWorksCount(series.works.length) }}
+        {{ formatWorksCount(series.works.length) }},
         {{ coverYear }}
       </p>
     </div>
@@ -48,6 +48,8 @@ const coverYear = computed(() => coverWork.value?.year ?? '')
   grid-template-columns: minmax(240px, 0.85fr) minmax(320px, 1.3fr);
   gap: 48px 56px;
   align-items: center;
+  max-width: none;
+  margin: 0;
   padding: 56px 40px 72px;
   background: #f2f2f2;
 }

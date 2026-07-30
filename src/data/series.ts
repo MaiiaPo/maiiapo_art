@@ -1,24 +1,19 @@
-import stillDesired from '../assets/theErrorOfTheBeautiful/01_stillDesired.JPG'
+﻿import stillDesired from '../assets/theErrorOfTheBeautiful/01_stillDesired.JPG'
 import lovedInPieces from '../assets/theErrorOfTheBeautiful/02_LovedInPieces.JPG'
 import banner from '../assets/theErrorOfTheBeautiful/banner/banner.JPG'
-import draft01 from '../assets/theErrorOfTheBeautiful/draft/IMG_0601.JPG'
-import draft02 from '../assets/theErrorOfTheBeautiful/draft/IMG_0602.JPG'
-import draft03 from '../assets/theErrorOfTheBeautiful/draft/IMG_0603.JPG'
-import draft04 from '../assets/theErrorOfTheBeautiful/draft/IMG_0604.JPG'
-import draft05 from '../assets/theErrorOfTheBeautiful/draft/IMG_0605.JPG'
-import draft06 from '../assets/theErrorOfTheBeautiful/draft/IMG_0606.JPG'
-import draft07 from '../assets/theErrorOfTheBeautiful/draft/IMG_0607.JPG'
-import draft08 from '../assets/theErrorOfTheBeautiful/draft/IMG_0608.JPG'
-import stackOfThoughts from '../assets/developerState/01_stackOfThoughts.JPG'
-import mergeConflict from '../assets/developerState/02_mergeConflict.JPG'
-import developerStateCover from '../assets/developerState/03_DeveloperState.JPG'
+import detail02 from '../assets/theErrorOfTheBeautiful/details/02.JPG'
+import detail03 from '../assets/theErrorOfTheBeautiful/details/03.JPG'
+import detail04 from '../assets/theErrorOfTheBeautiful/details/IMG_0610.JPG'
+import detail05 from '../assets/theErrorOfTheBeautiful/details/IMG_0611.JPG'
+import interior01 from '../assets/theErrorOfTheBeautiful/interior/01.JPG'
+import interior02 from '../assets/theErrorOfTheBeautiful/interior/IMG_0609.JPG'
+import stackOfThoughts from '../assets/developerState/stackOfThoughts/main.JPG'
+import mergeConflict from '../assets/developerState/mergeConflict/main.JPG'
+import developerStateCover from '../assets/developerState/developerState/main.JPG'
 import developerStateBanner from '../assets/developerState/banner/banner_.JPG'
-import dsDraft01 from '../assets/developerState/draft/IMG_0630.JPG'
-import dsDraft02 from '../assets/developerState/draft/IMG_0631.JPG'
-import dsDraft03 from '../assets/developerState/draft/IMG_0632.JPG'
-import dsDraft04 from '../assets/developerState/draft/IMG_4862.jpg'
-import dsDraft05 from '../assets/developerState/draft/IMG_7239.jpg'
-import dsDraft06 from '../assets/developerState/draft/IMG_8138.jpg'
+import dsInterior01 from '../assets/developerState/interior/01_interior.JPG'
+import dsInterior02 from '../assets/developerState/interior/02_interior.JPG'
+import dsInterior03 from '../assets/developerState/interior/03_interior.JPG'
 
 export type SeriesWork = {
   id: string
@@ -37,9 +32,12 @@ export type Series = {
   description: string
   /** Отдельная картинка для баннера страницы серии */
   bannerImage?: string
-  /** Абзацы концепции; последний можно выделить акцентом */
+  /** Абзацы концепции */
   concept: string[]
-  processImages: string[]
+  /** Кадры деталей серии (папка details) */
+  detailImages: string[]
+  /** Кадры «в интерьере» (папка interior), листаются */
+  interiorImages: string[]
   works: SeriesWork[]
 }
 
@@ -47,24 +45,17 @@ export const seriesList: Series[] = [
   {
     id: 'the-error-of-being-beautiful',
     title: 'The Error of Being Beautiful',
-    label: 'цифровые портреты',
-    description: 'Картины о красоте, которая постепенно ломается под чужими ожиданиями',
+    label: '',
+    description:
+      'Серия о красоте, которая продолжает быть желанной, даже когда начинает ломаться. В цифровом пространстве тело перестает восприниматься целиком: оно смещается, дробится, теряет связь между частями. Образ остается привлекательным, но уже не удерживает человека внутри себя.',
     bannerImage: banner,
     concept: [
-      'Серия исследует, как чужие ожидания постепенно искажают образ человека. Каждый портрет начинается с цельного лица и заканчивается тем, что система уже не может его «прочитать» правильно.',
-      'Красота здесь не идеал, а сбой: она ещё держится, но уже трескается по швам чужих правил, фильтров и готовых шаблонов.',
-      'Работая с маслом и цифровым слоем, я собираю образ заново — так, будто пытаюсь сохранить человека до того, как его окончательно поправят.',
+      'В цифровом пространстве красота все реже принадлежит человеку целиком. Она превращается в образ, который можно рассматривать, приближать, разбирать на части, сохранять и снова показывать. Тело становится не просто телом, а поверхностью ожиданий: быть привлекательной, собранной, желанной, достаточно правильной.',
+      'The Error of Being Beautiful говорит о моменте, когда этот образ начинает ломаться. Красота не исчезает, но перестает быть безопасной. Она смещает форму, разделяет тело на фрагменты, нарушает связь между частями. Человек все еще видим, все еще привлекателен, но его цельность постепенно ускользает.',
+      'В работах серии красота существует как ошибка, на которую продолжают смотреть.',
     ],
-    processImages: [
-      draft01,
-      draft02,
-      draft03,
-      draft04,
-      draft05,
-      draft06,
-      draft07,
-      draft08,
-    ],
+    detailImages: [detail02, detail03, detail04, detail05],
+    interiorImages: [interior01, interior02],
     works: [
       {
         id: 'still-desired',
@@ -85,9 +76,9 @@ export const seriesList: Series[] = [
         image: lovedInPieces,
       },
       {
-        id: 'work-03',
+        id: 'losing-my-shape',
         index: '03',
-        title: '—',
+        title: 'Losing My Shape',
         year: '2026',
         medium: 'Холст, масло',
         size: '50 × 100 см',
@@ -101,18 +92,12 @@ export const seriesList: Series[] = [
     description: 'Как профессия разработчика постепенно становится способом мышления',
     bannerImage: developerStateBanner,
     concept: [
-      'Серия о том, как работа с кодом перестаёт быть просто профессией и начинает формировать взгляд на мир.',
-      'Разработчик мыслит системами, состояниями и ошибками — и эти привычки постепенно проникают в повседневную жизнь.',
-      'Картины фиксируют этот переход: от инструмента к способу мышления.',
+      'Работа разработчика редко заканчивается вместе с рабочим днем. Постепенно код перестает быть только инструментом и становится способом воспринимать мир. Проблемы разбиваются на задачи, мысли складываются в алгоритмы, а внутренние состояния начинают ощущаться как режимы системы.',
+      'Серия Developer State исследует, как профессия меняет не только навыки, но и самого человека. Логика, постоянное переключение контекста, поиск ошибок, бесконечные версии и обновления становятся частью личности. Здесь разработчик показан не за компьютером, а в момент, когда цифровое мышление уже встроилось в него самого.',
+      'Это серия о людях, которые пишут код, а со временем начинают мыслить его структурами.',
     ],
-    processImages: [
-      dsDraft01,
-      dsDraft02,
-      dsDraft03,
-      dsDraft04,
-      dsDraft05,
-      dsDraft06,
-    ],
+    detailImages: [],
+    interiorImages: [dsInterior01, dsInterior02, dsInterior03],
     works: [
       {
         id: 'stack-of-thoughts',

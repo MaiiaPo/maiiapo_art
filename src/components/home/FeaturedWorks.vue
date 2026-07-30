@@ -2,7 +2,7 @@
   <section class="featured" aria-labelledby="featured-title">
     <div class="featured__intro">
       <p class="featured__label">[ каталог работ ]</p>
-      <h2 id="featured-title" class="featured__title">Избранные работы</h2>
+      <h2 id="featured-title" class="featured__title">Каталог работ</h2>
       <RouterLink class="featured__all" to="/works">
         Смотреть все работы
         <span class="featured__arrow" aria-hidden="true">→</span>
@@ -24,8 +24,7 @@
           </RouterLink>
 
           <div class="work-card__body">
-            <p class="work-card__index">[ {{ work.index }} ]</p>
-            <h3 class="work-card__title">{{ work.title }}</h3>
+            <h3 class="work-card__title">[ {{ work.title }} ]</h3>
             <p class="work-card__size">{{ work.size }}</p>
             <p class="work-card__price">{{ work.price }}</p>
             <RouterLink class="work-card__more" :to="work.to">
@@ -123,12 +122,6 @@ defineProps<{
 
 .work-card__placeholder {
   background: linear-gradient(160deg, #dcdcdc 0%, #c4c4c4 55%, #b0b0b0 100%);
-}
-
-.work-card__index {
-  margin: 0 0 4px;
-  font-size: 12px;
-  color: #555;
 }
 
 .work-card__title {

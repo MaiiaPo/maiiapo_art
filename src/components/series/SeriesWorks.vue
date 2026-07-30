@@ -1,5 +1,9 @@
 <template>
-  <section class="series-works" aria-labelledby="series-works-title">
+  <section
+    id="series-works"
+    class="series-works"
+    aria-labelledby="series-works-title"
+  >
     <div class="series-works__head">
       <h2 id="series-works-title" class="series-works__title">Работы серии</h2>
 
@@ -98,9 +102,11 @@ watch(
 
 <style scoped>
 .series-works {
-  max-width: 1180px;
-  margin-inline: auto;
-  padding: 24px 40px 80px;
+  max-width: none;
+  margin: 0;
+  padding: 40px 40px 72px;
+  background: #f2f2f2;
+  scroll-margin-top: 96px;
 }
 
 .series-works__head {
@@ -108,6 +114,8 @@ watch(
   align-items: baseline;
   justify-content: space-between;
   gap: 24px;
+  max-width: 1180px;
+  margin-inline: auto;
   margin-bottom: 32px;
 }
 
@@ -156,7 +164,8 @@ watch(
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px 20px;
-  margin: 0;
+  max-width: 1180px;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
 }
@@ -174,7 +183,7 @@ watch(
 
 @media (max-width: 900px) {
   .series-works {
-    padding: 16px 20px 56px;
+    padding: 28px 20px 48px;
   }
 }
 

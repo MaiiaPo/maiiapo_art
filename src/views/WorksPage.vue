@@ -80,18 +80,23 @@ const filteredWorks = computed(() => {
 const visibleWorks = computed(() => {
   const list = [...filteredWorks.value]
 
+  const statusRank = (work: Work) => (work.status === 'sold' ? 1 : 0)
+
   const byIndexDesc = (a: Work, b: Work) =>
     Number(b.index) - Number(a.index) || b.year - a.year
 
+  const byStatusThen = (compare: (a: Work, b: Work) => number) =>
+    (a: Work, b: Work) => statusRank(a) - statusRank(b) || compare(a, b)
+
   if (sortBy.value === 'newest') {
-    return list.sort((a, b) => b.year - a.year || byIndexDesc(a, b))
+    return list.sort(byStatusThen((a, b) => b.year - a.year || byIndexDesc(a, b)))
   }
 
   if (sortBy.value === 'price-asc') {
-    return list.sort((a, b) => a.price - b.price || byIndexDesc(a, b))
+    return list.sort(byStatusThen((a, b) => a.price - b.price || byIndexDesc(a, b)))
   }
 
-  return list.sort((a, b) => b.price - a.price || byIndexDesc(a, b))
+  return list.sort(byStatusThen((a, b) => b.price - a.price || byIndexDesc(a, b)))
 })
 </script>
 

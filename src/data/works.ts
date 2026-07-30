@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Каталог работ.
  *
  * Как добавить картинку:
@@ -27,9 +27,13 @@ import lovedInPieces from '../assets/theErrorOfTheBeautiful/02_LovedInPieces.JPG
 import lovedInPieces01 from '../assets/theErrorOfTheBeautiful/lovedInPieces/01.JPG'
 import lovedInPieces02 from '../assets/theErrorOfTheBeautiful/lovedInPieces/02.JPG'
 import lovedInPieces03 from '../assets/theErrorOfTheBeautiful/lovedInPieces/03.JPG'
-import stackOfThoughts from '../assets/developerState/01_stackOfThoughts.JPG'
-import mergeConflict from '../assets/developerState/02_mergeConflict.JPG'
-import developerStateWork from '../assets/developerState/03_DeveloperState.JPG'
+import stackOfThoughts from '../assets/developerState/stackOfThoughts/main.JPG'
+import stackOfThoughts01 from '../assets/developerState/stackOfThoughts/01.JPG'
+import mergeConflict from '../assets/developerState/mergeConflict/main.JPG'
+import mergeConflict01 from '../assets/developerState/mergeConflict/01.JPG'
+import mergeConflict02 from '../assets/developerState/mergeConflict/02.JPG'
+import developerStateWork from '../assets/developerState/developerState/main.JPG'
+import developerState01 from '../assets/developerState/developerState/01.JPG'
 
 export type WorkStatus = 'available' | 'sold' | 'reserved'
 
@@ -73,7 +77,7 @@ export const works: Work[] = [
     image: stillDesired,
     galleryImages: [stillDesired01, stillDesired02, stillDesired03],
     description:
-      'Портрет о желании остаться желанной даже тогда, когда образ уже трещит под чужими ожиданиями. Красота ещё держится, но система уже начинает читать её с ошибкой.',
+      'Образ, который уже нарушен, но все еще остается объектом желания.',
     featured: false,
   },
   {
@@ -89,82 +93,99 @@ export const works: Work[] = [
     image: lovedInPieces,
     galleryImages: [lovedInPieces01, lovedInPieces02, lovedInPieces03],
     description:
-      'Любовь, собранная из фрагментов: лицо ещё узнаваемо, но уже разрезано чужими правилами. Работа о том, как принимают по частям — и теряют целое.',
+      'О взгляде, который любит не целого человека, а отдельные части, жесты, линии, фрагменты тела.',
     featured: false,
   },
   {
-    id: 'cut-to-fit',
+    id: 'losing-my-shape',
     index: '03',
-    title: 'Cut To Fit',
+    title: 'Losing My Shape',
     year: 2026,
     size: '50 × 100 см',
     medium: 'Холст, масло',
     price: 85000,
+    status: 'available',
+    seriesId: 'the-error-of-being-beautiful',
+    description:
+      'Момент, когда красота становится нестабильной: части тела все еще привлекательны, но между ними уже нет прежней связи. Человек остается видимым, но его цельность начинает ускользать.',
+    featured: false,
+  },
+  {
+    id: 'cut-to-fit',
+    index: '04',
+    title: 'Cut To Fit',
+    year: 2026,
+    size: '50 × 60 см',
+    medium: 'Холст, масло',
+    price: 12000,
     status: 'available',
     seriesId: null,
     image: cutToFit,
     galleryImages: [cutToFit01, cutToFit02, cutToFit03],
     description:
-      'О попытке вписаться в чужую форму: обрезать лишнее, подогнать края, стать удобной. Картина фиксирует момент, когда подгонка уже заметнее самого человека.',
+      'Иногда мы так стараемся сохранить красивую форму, что не замечаем, как нас начинают подгонять под нее. Тело остается привлекательным, но внутри появляются искажения и несоответствия.',
     featured: true,
   },
   {
     id: 'holding-it-in',
-    index: '04',
+    index: '05',
     title: 'Holding It In',
     year: 2026,
-    size: '50 × 100 см',
+    size: '40 × 60 см',
     medium: 'Холст, масло',
-    price: 85000,
+    price: 15000,
     status: 'available',
     seriesId: null,
     image: holdingItIn,
     galleryImages: [holdingItIn01, holdingItIn02, holdingItIn03],
     description:
-      'О сдержанности, которая уже почти не держится. Внутри накопилось слишком много — снаружи остаётся только напряжение линии и взгляда.',
+      'Мы тратим удивительно много сил не на то, чтобы быть красивыми, а на то, чтобы сохранить красоту.',
     featured: true,
   },
   {
     id: 'stack-of-thoughts',
-    index: '05',
+    index: '06',
     title: 'Stack Of Thoughts',
     year: 2026,
     size: '50 × 100 см',
     medium: 'Холст, масло',
-    price: 85000,
-    status: 'available',
+    price: 0,
+    status: 'sold',
     seriesId: 'developer-state',
     image: stackOfThoughts,
+    galleryImages: [stackOfThoughts01],
     description:
-      'Мысли укладываются слоями, как стек вызовов: каждое новое состояние опирается на предыдущее. Портрет о перегруженном внимании и привычке держать всё в голове.',
+      'Мысли разработчика редко существуют по одной. Они складываются в многослойную систему, где каждый новый уровень опирается на предыдущий.',
   },
   {
     id: 'merge-conflict',
-    index: '06',
+    index: '07',
     title: 'Merge Conflict',
-    year: 2026,
+    year: 2025,
     size: '50 × 100 см',
     medium: 'Холст, масло',
-    price: 85000,
-    status: 'available',
+    price: 0,
+    status: 'sold',
     seriesId: 'developer-state',
     image: mergeConflict,
+    galleryImages: [mergeConflict01, mergeConflict02],
     description:
       'Две версии одного человека не сходятся в одну. Конфликт слияния — когда внутренние правки противоречат друг другу, и система отказывается выбрать «правильную».',
   },
   {
     id: 'developer-state',
-    index: '07',
+    index: '08',
     title: 'Developer State',
     year: 2026,
     size: '50 × 100 см',
     medium: 'Холст, масло',
-    price: 85000,
-    status: 'available',
+    price: 0,
+    status: 'sold',
     seriesId: 'developer-state',
     image: developerStateWork,
+    galleryImages: [developerState01],
     description:
-      'Состояние, в котором профессия уже стала способом видеть мир: через состояния, ошибки и системы. Финальный портрет серии о взгляде разработчика.',
+      'Рабочие состояния становятся почти интерфейсом личности, переключаясь также быстро, как режимы программы.',
   },
 ]
 

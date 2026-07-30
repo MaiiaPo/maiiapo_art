@@ -1,9 +1,13 @@
 <template>
   <div v-if="series" class="series-detail">
     <SeriesHeroBanner :series="series" />
-    <SeriesAbout
-      :paragraphs="series.concept"
-      :images="series.processImages"
+    <SeriesDetails
+      v-if="series.detailImages.length"
+      :images="series.detailImages"
+    />
+    <SeriesInterior
+      v-if="series.interiorImages.length"
+      :images="series.interiorImages"
     />
     <SeriesWorks :series="series" />
   </div>
@@ -17,8 +21,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import SeriesAbout from '../components/series/SeriesAbout.vue'
+import SeriesDetails from '../components/series/SeriesDetails.vue'
 import SeriesHeroBanner from '../components/series/SeriesHeroBanner.vue'
+import SeriesInterior from '../components/series/SeriesInterior.vue'
 import SeriesWorks from '../components/series/SeriesWorks.vue'
 import { getSeriesById } from '../data/series'
 
@@ -31,6 +36,13 @@ const series = computed(() => {
 </script>
 
 <style scoped>
+.series-detail {
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+  background: #fff;
+}
+
 .series-detail--empty {
   display: grid;
   gap: 16px;
@@ -43,6 +55,11 @@ const series = computed(() => {
 }
 
 @media (max-width: 900px) {
+  .series-detail {
+    gap: 12px;
+    padding: 12px;
+  }
+
   .series-detail--empty {
     padding: 40px 20px;
   }
