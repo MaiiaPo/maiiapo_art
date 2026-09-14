@@ -1,40 +1,60 @@
 <template>
   <section class="featured" aria-labelledby="featured-title">
-    <div class="featured__intro">
-      <p class="featured__label">[ каталог работ ]</p>
-      <h2 id="featured-title" class="featured__title">Каталог работ</h2>
-      <RouterLink class="featured__all" to="/works">
-        Смотреть все работы
-        <span class="featured__arrow" aria-hidden="true">→</span>
-      </RouterLink>
-    </div>
+    <div class="featured__inner">
+      <div class="featured__intro">
+        <p class="featured__label">[ каталог работ ]</p>
+        <h2 id="featured-title" class="featured__title">Каталог работ</h2>
+        <RouterLink class="featured__all" to="/works">
+          Смотреть все работы
+          <span class="featured__arrow" aria-hidden="true">→</span>
+        </RouterLink>
+      </div>
 
-    <ul class="featured__grid">
-      <li v-for="work in works" :key="work.id" class="featured__item">
-        <article class="work-card">
-          <RouterLink class="work-card__media" :to="work.to">
-            <img
-              v-if="work.image"
-              class="work-card__img"
-              :src="work.image"
-              :alt="work.title"
-            />
-            <!-- TODO: изображение из src/assets/featuredWorks -->
-            <div v-else class="work-card__placeholder" aria-hidden="true" />
-          </RouterLink>
-
-          <div class="work-card__body">
-            <h3 class="work-card__title">[ {{ work.title }} ]</h3>
-            <p class="work-card__size">{{ work.size }}</p>
-            <p class="work-card__price">{{ work.price }}</p>
-            <RouterLink class="work-card__more" :to="work.to">
-              Подробнее
-              <span class="featured__arrow" aria-hidden="true">→</span>
+      <ul class="featured__grid">
+        <li v-for="work in works" :key="work.id" class="featured__item">
+          <article class="work-card">
+            <RouterLink class="work-card__media" :to="work.to">
+              <img
+                v-if="work.image"
+                class="work-card__img"
+                :src="work.image"
+                :alt="`${work.titleRu} / ${work.titleEn}`"
+              />
+              <div v-else class="work-card__placeholder" aria-hidden="true" />
             </RouterLink>
-          </div>
-        </article>
-      </li>
-    </ul>
+
+            <div class="work-card__body">
+              <h3 class="work-card__title">
+                <span class="work-card__title-ru">{{ work.titleRu }}</span>
+                <span class="work-card__title-en">{{ work.titleEn }}</span>
+              </h3>
+
+              <div class="work-card__series-slot">
+                <p
+                  v-if="work.seriesTitleRu && work.seriesTo"
+                  class="work-card__series"
+                >
+                  <span class="work-card__series-label">Серия:</span>
+                  <RouterLink class="work-card__series-link" :to="work.seriesTo">
+                    {{ work.seriesTitleRu }}
+                  </RouterLink>
+                </p>
+              </div>
+
+              <div class="work-card__specs">
+                <span class="work-card__size">{{ work.size }}</span>
+                <span class="work-card__price">{{ work.price }}</span>
+              </div>
+
+              <RouterLink class="work-card__more" :to="work.to">
+                Подробнее
+                <span class="featured__arrow" aria-hidden="true">→</span>
+              </RouterLink>
+            </div>
+          </article>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
@@ -49,11 +69,16 @@ defineProps<{
 
 <style scoped>
 .featured {
+  padding: 56px 40px 72px;
+  background: #f7f7f7;
+}
+
+.featured__inner {
   display: grid;
   grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   gap: 40px 48px;
-  padding: 56px 40px 72px;
-  background: #f7f7f7;
+  max-width: 1200px;
+  margin-inline: auto;
 }
 
 .featured__label {
@@ -86,7 +111,7 @@ defineProps<{
 
 .featured__all:hover,
 .work-card__more:hover {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .featured__arrow {
@@ -95,16 +120,31 @@ defineProps<{
 
 .featured__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px 32px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.featured__item {
+  min-width: 0;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+}
+
 .work-card__media {
-  display: block;
-  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: clamp(240px, 26vw, 300px);
+  margin-bottom: 22px;
   color: inherit;
   text-decoration: none;
 }
@@ -112,34 +152,108 @@ defineProps<{
 .work-card__img,
 .work-card__placeholder {
   display: block;
-  aspect-ratio: 3 / 4;
-  width: 100%;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
 }
 
 .work-card__img {
-  object-fit: cover;
+  object-fit: contain;
+  object-position: bottom center;
 }
 
 .work-card__placeholder {
+  width: 100%;
   background: linear-gradient(160deg, #dcdcdc 0%, #c4c4c4 55%, #b0b0b0 100%);
 }
 
+.work-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+}
+
 .work-card__title {
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 14px;
+}
+
+.work-card__title-ru {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.work-card__title-en {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #777;
+}
+
+.work-card__series-slot {
+  display: flex;
+  align-items: center;
+  min-height: 1.2em;
+  margin: 0 0 18px;
+}
+
+.work-card__series {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.work-card__series-label {
+  color: #151515;
+}
+
+.work-card__series-link {
+  color: #d51d78;
+  text-decoration: none;
+}
+
+.work-card__series-link:hover {
+  opacity: 0.65;
+}
+
+.work-card__specs {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 14px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .work-card__size {
-  margin: 0 0 8px;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #777;
 }
 
 .work-card__price {
-  margin: 0 0 14px;
   font-size: 15px;
   font-weight: 600;
+  color: #151515;
+}
+
+.work-card__more {
+  margin-top: auto;
 }
 
 @media (max-width: 1100px) {
@@ -150,9 +264,12 @@ defineProps<{
 
 @media (max-width: 900px) {
   .featured {
+    padding: 40px 20px 48px;
+  }
+
+  .featured__inner {
     grid-template-columns: 1fr;
     gap: 32px;
-    padding: 40px 20px 48px;
   }
 }
 

@@ -1,15 +1,9 @@
 <template>
   <div v-if="series" class="series-detail">
     <SeriesHeroBanner :series="series" />
-    <SeriesDetails
-      v-if="series.detailImages.length"
-      :images="series.detailImages"
-    />
-    <SeriesInterior
-      v-if="series.interiorImages.length"
-      :images="series.interiorImages"
-    />
-    <SeriesWorks :series="series" />
+    <SeriesAbout v-if="about" :about="about" />
+    <SeriesProcess v-if="process" :process="process" />
+    <SeriesInterior :series="series" />
   </div>
 
   <section v-else class="series-detail series-detail--empty">
@@ -21,17 +15,29 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import SeriesDetails from '../components/series/SeriesDetails.vue'
+import SeriesAbout from '../components/series/SeriesAbout.vue'
 import SeriesHeroBanner from '../components/series/SeriesHeroBanner.vue'
 import SeriesInterior from '../components/series/SeriesInterior.vue'
-import SeriesWorks from '../components/series/SeriesWorks.vue'
+import SeriesProcess from '../components/series/SeriesProcess.vue'
 import { getSeriesById } from '../data/series'
+import { seriesAboutById } from '../data/seriesAbout'
+import { seriesProcessById } from '../data/seriesProcess'
 
 const route = useRoute()
 
 const series = computed(() => {
   const id = route.params.id
   return typeof id === 'string' ? getSeriesById(id) : undefined
+})
+
+const about = computed(() => {
+  const id = route.params.id
+  return typeof id === 'string' ? seriesAboutById[id] : undefined
+})
+
+const process = computed(() => {
+  const id = route.params.id
+  return typeof id === 'string' ? seriesProcessById[id] : undefined
 })
 </script>
 

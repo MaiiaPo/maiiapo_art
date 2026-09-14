@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <AppHeader />
+    <AppBreadcrumbs />
 
     <main class="page__main">
       <RouterView />
@@ -12,12 +13,13 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import AppBreadcrumbs from './components/layout/AppBreadcrumbs.vue'
 import AppHeader from './components/layout/AppHeader.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@500;600&family=Playfair+Display:wght@500&display=swap");
 
 * {
   box-sizing: border-box;

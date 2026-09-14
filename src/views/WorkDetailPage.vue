@@ -1,34 +1,19 @@
 <template>
   <section v-if="work" class="work-detail">
     <div class="work-detail__inner">
-      <RouterLink class="work-detail__back" :to="backLink.to">
-        ← {{ backLink.label }}
-      </RouterLink>
-
       <div class="work-detail__main">
-        <WorkInfo :work="work" />
         <WorkGallery :images="gallery" :alt="work.title" />
+
+        <div class="work-detail__side">
+          <WorkInfo :work="work" />
+        </div>
       </div>
-
-      <WorkSeriesBlock
-        v-if="series"
-        :series="series"
-        :current-work-id="work.id"
-      />
-
-      <section
-        v-else-if="work.description"
-        class="work-detail__about"
-        aria-labelledby="work-about-title"
-      >
-        <h2 id="work-about-title" class="work-detail__about-title">О работе</h2>
-        <p class="work-detail__about-text">{{ work.description }}</p>
-      </section>
 
       <WorkSeriesOthers
         v-if="series"
         :series-id="series.id"
         :current-work-id="work.id"
+        :series-to="seriesPath(series.id)"
       />
     </div>
   </section>
@@ -44,7 +29,6 @@ import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import WorkGallery from '../components/works/WorkGallery.vue'
 import WorkInfo from '../components/works/WorkInfo.vue'
-import WorkSeriesBlock from '../components/works/WorkSeriesBlock.vue'
 import WorkSeriesOthers from '../components/works/WorkSeriesOthers.vue'
 import { getSeriesById, seriesPath } from '../data/series'
 import { getWorkById, getWorkGallery } from '../data/works'
@@ -62,25 +46,13 @@ const series = computed(() => {
 })
 
 const gallery = computed(() => (work.value ? getWorkGallery(work.value) : []))
-
-const backLink = computed(() => {
-  if (series.value) {
-    return {
-      to: seriesPath(series.value.id),
-      label: 'к работам серии',
-    }
-  }
-
-  return {
-    to: '/works',
-    label: 'к работам',
-  }
-})
 </script>
 
 <style scoped>
 .work-detail {
-  padding: 40px 40px 80px;
+  padding: 28px 40px 80px;
+  background: #f7f7f7;
+  color: #151515;
 }
 
 .work-detail__inner {
@@ -88,46 +60,19 @@ const backLink = computed(() => {
   margin-inline: auto;
 }
 
-.work-detail__back {
-  display: inline-block;
-  margin-bottom: 28px;
-  color: inherit;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.work-detail__back:hover {
-  opacity: 0.6;
-}
-
 .work-detail__main {
   display: grid;
-  grid-template-columns: minmax(240px, 340px) minmax(0, 1fr);
-  gap: 48px 64px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 40px 56px;
   align-items: start;
   margin-bottom: 48px;
 }
 
-.work-detail__about {
-  padding: 36px 0 8px;
-  border-top: 1px solid #ddd;
-}
-
-.work-detail__about-title {
-  margin: 0 0 16px;
-  font-family: "Oswald", sans-serif;
-  font-size: clamp(24px, 3vw, 36px);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-.work-detail__about-text {
-  margin: 0;
-  max-width: 62ch;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #333;
+.work-detail__side {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
 }
 
 .work-detail--empty {
@@ -142,12 +87,12 @@ const backLink = computed(() => {
 
 @media (max-width: 900px) {
   .work-detail {
-    padding: 28px 20px 56px;
+    padding: 20px 20px 56px;
   }
 
   .work-detail__main {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 }
 </style>

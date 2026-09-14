@@ -1,37 +1,69 @@
 <template>
   <div class="work-gallery">
-    <div class="work-gallery__stage">
+    <div class="work-gallery__viewer">
+      <button
+        class="work-gallery__arrow"
+        type="button"
+        aria-label="Предыдущее изображение"
+        :disabled="images.length < 2"
+        @click="prev"
+      >
+        <svg
+          class="work-gallery__arrow-icon"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M10 3.5 5.5 8 10 12.5"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
       <button
         v-if="current"
         class="work-gallery__main"
         type="button"
         aria-label="Увеличить изображение"
+        :style="stageStyle"
         @click="lightboxOpen = true"
       >
         <img :src="current" :alt="alt" />
       </button>
-      <div v-else class="work-gallery__main work-gallery__main--empty" aria-hidden="true">
+      <div
+        v-else
+        class="work-gallery__main work-gallery__main--empty"
+        aria-hidden="true"
+        :style="stageStyle"
+      >
         <div class="work-gallery__placeholder" />
       </div>
 
       <button
-        v-if="current"
-        class="work-gallery__zoom"
+        class="work-gallery__arrow"
         type="button"
-        @click="lightboxOpen = true"
+        aria-label="Следующее изображение"
+        :disabled="images.length < 2"
+        @click="next"
       >
         <svg
-          class="work-gallery__zoom-icon"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
+          class="work-gallery__arrow-icon"
+          viewBox="0 0 16 16"
           fill="none"
           aria-hidden="true"
         >
-          <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6" />
-          <path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="1.6" />
+          <path
+            d="M6 3.5 10.5 8 6 12.5"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
-        Увеличить
       </button>
     </div>
 
@@ -82,13 +114,41 @@ const props = defineProps<{
 
 const activeIndex = ref(0)
 const lightboxOpen = ref(false)
+const stageSize = ref<{ width: number; height: number } | null>(null)
+
+const current = computed(() => props.images[activeIndex.value])
+
+const stageStyle = computed(() => {
+  if (!stageSize.value) return undefined
+  return {
+    width: `${stageSize.value.width}px`,
+    height: `${stageSize.value.height}px`,
+  }
+})
+
+function measureFirstImage(src: string) {
+  const img = new Image()
+  img.onload = () => {
+    const maxW = Math.min(420, window.innerWidth - 140)
+    const maxH = Math.min(window.innerHeight * 0.7, 620)
+    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1)
+    stageSize.value = {
+      width: Math.max(1, Math.round(img.naturalWidth * scale)),
+      height: Math.max(1, Math.round(img.naturalHeight * scale)),
+    }
+  }
+  img.src = src
+}
 
 watch(
   () => props.images,
-  () => {
+  (images) => {
     activeIndex.value = 0
     lightboxOpen.value = false
+    if (images[0]) measureFirstImage(images[0])
+    else stageSize.value = null
   },
+  { immediate: true },
 )
 
 watch(lightboxOpen, (open) => {
@@ -96,8 +156,10 @@ watch(lightboxOpen, (open) => {
 })
 
 function onKeydown(event: KeyboardEvent) {
-  if (!lightboxOpen.value) return
-  if (event.key === 'Escape') lightboxOpen.value = false
+  if (event.key === 'Escape' && lightboxOpen.value) {
+    lightboxOpen.value = false
+    return
+  }
   if (event.key === 'ArrowLeft') prev()
   if (event.key === 'ArrowRight') next()
 }
@@ -108,8 +170,6 @@ onUnmounted(() => {
   window.removeEventListener('keydown', onKeydown)
   document.body.style.overflow = ''
 })
-
-const current = computed(() => props.images[activeIndex.value])
 
 function prev() {
   if (props.images.length < 2) return
@@ -126,25 +186,64 @@ function next() {
 <style scoped>
 .work-gallery {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: start;
+  gap: 20px;
+  justify-items: center;
+  min-width: 0;
 }
 
-.work-gallery__stage {
+.work-gallery__viewer {
   display: grid;
-  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
   justify-items: center;
+  width: 100%;
+}
+
+.work-gallery__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #2a2a2a;
+  border-radius: 50%;
+  background: transparent;
+  color: #151515;
+  line-height: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.work-gallery__arrow-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.work-gallery__arrow:hover:not(:disabled) {
+  background: #151515;
+  color: #f3f3f3;
+}
+
+.work-gallery__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .work-gallery__main {
-  display: block;
+  display: grid;
+  place-items: center;
   width: 100%;
   max-width: 420px;
-  margin: 0;
+  min-height: 280px;
+  margin: 0 auto;
   padding: 0;
   border: 0;
-  background: transparent;
+  overflow: hidden;
+  background: #ececec;
   cursor: zoom-in;
 }
 
@@ -152,48 +251,25 @@ function next() {
   cursor: default;
 }
 
-.work-gallery__main img,
-.work-gallery__placeholder {
+.work-gallery__main img {
   display: block;
   width: 100%;
-  max-height: min(72vh, 640px);
-  height: auto;
+  height: 100%;
   object-fit: contain;
-  background: #ececec;
+  object-position: center;
 }
 
 .work-gallery__placeholder {
-  aspect-ratio: 1 / 2;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
   background: linear-gradient(160deg, #dcdcdc 0%, #c4c4c4 55%, #b0b0b0 100%);
 }
 
-.work-gallery__zoom {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #555;
-  font: inherit;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.work-gallery__zoom:hover {
-  color: #111;
-}
-
-.work-gallery__zoom-icon {
-  display: block;
-  flex-shrink: 0;
-}
-
 .work-gallery__thumbs {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin: 0;
   padding: 0;
@@ -206,7 +282,7 @@ function next() {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   background: #e8e8e8;
   cursor: pointer;
 }
@@ -257,19 +333,23 @@ function next() {
 }
 
 @media (max-width: 900px) {
-  .work-gallery {
-    grid-template-columns: 1fr;
+  .work-gallery__viewer {
+    gap: 10px;
   }
 
-  .work-gallery__thumbs {
-    grid-auto-flow: column;
-    grid-auto-columns: 64px;
-    justify-content: start;
-    overflow-x: auto;
+  .work-gallery__arrow {
+    width: 40px;
+    height: 40px;
   }
 
   .work-gallery__main {
     max-width: none;
+  }
+
+  .work-gallery__thumbs {
+    justify-content: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
   }
 }
 </style>

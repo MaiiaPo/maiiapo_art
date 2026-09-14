@@ -1,52 +1,135 @@
 <template>
   <header class="app-header">
     <RouterLink class="app-header__logo" to="/">
-      <!-- TODO: изображение логотипа -->
-      <span class="app-header__logo-text">Maiia Po</span>
+      <img
+        class="app-header__logo-img"
+        :src="logo"
+        alt="Maiia Po"
+      />
     </RouterLink>
 
     <MainNav />
-    <!-- <HeaderActions /> -->
+
+    <div class="app-header__lang" aria-label="Язык">
+      <button
+        class="app-header__lang-btn"
+        type="button"
+        :class="{ 'is-active': locale === 'ru' }"
+        @click="locale = 'ru'"
+      >
+        RU
+      </button>
+      <span class="app-header__lang-sep" aria-hidden="true">/</span>
+      <button
+        class="app-header__lang-btn"
+        type="button"
+        :class="{ 'is-active': locale === 'en' }"
+        @click="locale = 'en'"
+      >
+        EN
+      </button>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import MainNav from '../navigation/MainNav.vue'
-// import HeaderActions from '../navigation/HeaderActions.vue'
+import logo from '../../assets/artist/logo.png'
+
+const locale = ref<'ru' | 'en'>('ru')
 </script>
 
 <style scoped>
 .app-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
   width: 100%;
-  padding: 18px 40px;
+  padding: 22px 40px;
   box-sizing: border-box;
-  background: #ececec;
+  background: #f3f3f3;
   color: #151515;
   font-family: "Inter", sans-serif;
 }
 
 .app-header__logo {
-  flex-shrink: 0;
+  justify-self: start;
+  display: flex;
+  align-items: center;
   color: inherit;
   text-decoration: none;
 }
 
-.app-header__logo-text {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+.app-header__logo-img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+.app-header__lang {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header__lang-btn {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #9a9a9a;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.app-header__lang-btn.is-active {
+  color: #151515;
+}
+
+.app-header__lang-btn:hover {
+  color: #151515;
+}
+
+.app-header__lang-sep {
+  color: #c0c0c0;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 
 @media (max-width: 900px) {
   .app-header {
-    flex-wrap: wrap;
-    gap: 16px 24px;
-    padding: 16px 20px;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "logo lang"
+      "nav nav";
+    gap: 16px 20px;
+    padding: 18px 20px;
+  }
+
+  .app-header__logo {
+    grid-area: logo;
+  }
+
+  .app-header :deep(.main-nav) {
+    grid-area: nav;
+    justify-self: stretch;
+  }
+
+  .app-header__lang {
+    grid-area: lang;
+  }
+
+  .app-header__logo-img {
+    height: 32px;
   }
 }
 </style>

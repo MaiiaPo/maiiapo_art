@@ -1,14 +1,10 @@
 ﻿/**
  * Каталог работ.
  *
- * Как добавить картинку:
- * 1. Положите файл в src/assets/... (например featuredWorks или папку серии)
- * 2. Импортируйте сверху файла
- * 3. Укажите в поле image
- *
- * Пример:
- *   import myWork from '../assets/featuredWorks/myWork.JPG'
- *   { id: 'my-work', ..., image: myWork }
+ * Как добавить картинки на страницу работы:
+ * 1. В папке работы: main.png + detail1.png, detail2.png...
+ * 2. Импортируйте main сверху и укажите в поле image
+ * 3. detail* подхватятся автоматически (см. workDetailFolderById)
  */
 
 import cutToFit from '../assets/different/cutToFit/cutToFit.JPG'
@@ -19,21 +15,53 @@ import holdingItIn from '../assets/different/holdingItIn/holdingItIn.JPG'
 import holdingItIn01 from '../assets/different/holdingItIn/01.JPG'
 import holdingItIn02 from '../assets/different/holdingItIn/02.JPG'
 import holdingItIn03 from '../assets/different/holdingItIn/03.JPG'
-import stillDesired from '../assets/theErrorOfTheBeautiful/01_stillDesired.JPG'
-import stillDesired01 from '../assets/theErrorOfTheBeautiful/stillDesired/01.JPG'
-import stillDesired02 from '../assets/theErrorOfTheBeautiful/stillDesired/02.JPG'
-import stillDesired03 from '../assets/theErrorOfTheBeautiful/stillDesired/03.JPG'
-import lovedInPieces from '../assets/theErrorOfTheBeautiful/02_LovedInPieces.JPG'
-import lovedInPieces01 from '../assets/theErrorOfTheBeautiful/lovedInPieces/01.JPG'
-import lovedInPieces02 from '../assets/theErrorOfTheBeautiful/lovedInPieces/02.JPG'
-import lovedInPieces03 from '../assets/theErrorOfTheBeautiful/lovedInPieces/03.JPG'
-import stackOfThoughts from '../assets/developerState/stackOfThoughts/main.JPG'
-import stackOfThoughts01 from '../assets/developerState/stackOfThoughts/01.JPG'
-import mergeConflict from '../assets/developerState/mergeConflict/main.JPG'
-import mergeConflict01 from '../assets/developerState/mergeConflict/01.JPG'
-import mergeConflict02 from '../assets/developerState/mergeConflict/02.JPG'
-import developerStateWork from '../assets/developerState/developerState/main.JPG'
-import developerState01 from '../assets/developerState/developerState/01.JPG'
+import ready from '../assets/pages/series/savedForLater/ready/main.png'
+import almostOut from '../assets/pages/series/savedForLater/almostOut/main.png'
+import inProgress from '../assets/pages/series/savedForLater/inProgress/main.png'
+import settledIn from '../assets/pages/series/savedForLater/settledIn/main.png'
+import noRush from '../assets/pages/series/savedForLater/noRush/main.png'
+import stillDesired from '../assets/pages/series/theErrorOfTheBeautiful/stillDesired/main.png'
+import lovedInPieces from '../assets/pages/series/theErrorOfTheBeautiful/lovedInPieces/main.png'
+import losingMyShape from '../assets/pages/series/theErrorOfTheBeautiful/losingMyShape/main.png'
+import stackOfThoughts from '../assets/pages/series/developerState/stackOfThroughts/main.png'
+import mergeConflict from '../assets/pages/series/developerState/mergeConflict/main.png'
+import developerStateWork from '../assets/pages/series/developerState/developerState/main.png'
+import { getSeriesById } from './series'
+
+/** detail1, detail2... из папок работ серий */
+const seriesDetailImages = import.meta.glob(
+  '../assets/pages/series/**/detail*.{png,PNG,jpg,JPG,jpeg,JPEG}',
+  { eager: true, import: 'default' },
+) as Record<string, string>
+
+/** Папка работы относительно pages/series — для автоподхвата detail* */
+const workDetailFolderById: Record<string, string> = {
+  'still-desired': 'theErrorOfTheBeautiful/stillDesired',
+  'loved-in-pieces': 'theErrorOfTheBeautiful/lovedInPieces',
+  'losing-my-shape': 'theErrorOfTheBeautiful/losingMyShape',
+  ready: 'savedForLater/ready',
+  'almost-out': 'savedForLater/almostOut',
+  'in-progress': 'savedForLater/inProgress',
+  'settled-in': 'savedForLater/settledIn',
+  'no-rush': 'savedForLater/noRush',
+  'stack-of-thoughts': 'developerState/stackOfThroughts',
+  'merge-conflict': 'developerState/mergeConflict',
+  'developer-state': 'developerState/developerState',
+}
+
+function getSeriesWorkDetails(workId: string): string[] {
+  const folder = workDetailFolderById[workId]
+  if (!folder) return []
+
+  const needle = `/pages/series/${folder}/`.toLowerCase()
+
+  return Object.entries(seriesDetailImages)
+    .filter(([path]) => path.replace(/\\/g, '/').toLowerCase().includes(needle))
+    .sort(([a], [b]) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+    )
+    .map(([, url]) => url)
+}
 
 export type WorkStatus = 'available' | 'sold' | 'reserved'
 
@@ -75,7 +103,6 @@ export const works: Work[] = [
     status: 'available',
     seriesId: 'the-error-of-being-beautiful',
     image: stillDesired,
-    galleryImages: [stillDesired01, stillDesired02, stillDesired03],
     description:
       'Образ, который уже нарушен, но все еще остается объектом желания.',
     featured: false,
@@ -87,11 +114,10 @@ export const works: Work[] = [
     year: 2026,
     size: '50 × 100 см',
     medium: 'Холст, масло',
-    price: 120000,
+    price: 85000,
     status: 'available',
     seriesId: 'the-error-of-being-beautiful',
     image: lovedInPieces,
-    galleryImages: [lovedInPieces01, lovedInPieces02, lovedInPieces03],
     description:
       'О взгляде, который любит не целого человека, а отдельные части, жесты, линии, фрагменты тела.',
     featured: false,
@@ -106,6 +132,7 @@ export const works: Work[] = [
     price: 85000,
     status: 'available',
     seriesId: 'the-error-of-being-beautiful',
+    image: losingMyShape,
     description:
       'Момент, когда красота становится нестабильной: части тела все еще привлекательны, но между ними уже нет прежней связи. Человек остается видимым, но его цельность начинает ускользать.',
     featured: false,
@@ -143,23 +170,85 @@ export const works: Work[] = [
     featured: true,
   },
   {
-    id: 'stack-of-thoughts',
+    id: 'ready',
     index: '06',
-    title: 'Stack Of Thoughts',
+    title: 'Ready',
     year: 2026,
+    size: '60 × 70 см',
+    medium: 'Холст, масло',
+    price: 22000,
+    status: 'available',
+    seriesId: 'postponed-for-later',
+    image: ready,
+    description:
+      'Момент, когда форма уже собрана и готова к показу — но внутри все еще чувствуется напряжение подгонки.',
+    featured: true,
+  },
+  {
+    id: 'almost-out',
+    index: '10',
+    title: 'Almost Out',
+    year: 2026,
+    size: '60 × 70 см',
+    medium: 'Холст, масло',
+    price: 22000,
+    status: 'available',
+    seriesId: 'postponed-for-later',
+    image: almostOut,
+  },
+  {
+    id: 'in-progress',
+    index: '11',
+    title: 'In Progress',
+    year: 2026,
+    size: '60 × 70 см',
+    medium: 'Холст, масло',
+    price: 22000,
+    status: 'available',
+    seriesId: 'postponed-for-later',
+    image: inProgress,
+  },
+  {
+    id: 'settled-in',
+    index: '12',
+    title: 'Settled In',
+    year: 2026,
+    size: '60 × 70 см',
+    medium: 'Холст, масло',
+    price: 22000,
+    status: 'available',
+    seriesId: 'postponed-for-later',
+    image: settledIn,
+  },
+  {
+    id: 'no-rush',
+    index: '13',
+    title: 'No Rush',
+    year: 2026,
+    size: '60 × 70 см',
+    medium: 'Холст, масло',
+    price: 22000,
+    status: 'available',
+    seriesId: 'postponed-for-later',
+    image: noRush,
+  },
+  {
+    id: 'stack-of-thoughts',
+    index: '07',
+    title: 'Stack Of Thoughts',
+    year: 2025,
     size: '50 × 100 см',
     medium: 'Холст, масло',
     price: 0,
     status: 'sold',
     seriesId: 'developer-state',
     image: stackOfThoughts,
-    galleryImages: [stackOfThoughts01],
     description:
       'Мысли разработчика редко существуют по одной. Они складываются в многослойную систему, где каждый новый уровень опирается на предыдущий.',
   },
   {
     id: 'merge-conflict',
-    index: '07',
+    index: '08',
     title: 'Merge Conflict',
     year: 2025,
     size: '50 × 100 см',
@@ -168,13 +257,12 @@ export const works: Work[] = [
     status: 'sold',
     seriesId: 'developer-state',
     image: mergeConflict,
-    galleryImages: [mergeConflict01, mergeConflict02],
     description:
       'Две версии одного человека не сходятся в одну. Конфликт слияния — когда внутренние правки противоречат друг другу, и система отказывается выбрать «правильную».',
   },
   {
     id: 'developer-state',
-    index: '08',
+    index: '09',
     title: 'Developer State',
     year: 2026,
     size: '50 × 100 см',
@@ -183,7 +271,6 @@ export const works: Work[] = [
     status: 'sold',
     seriesId: 'developer-state',
     image: developerStateWork,
-    galleryImages: [developerState01],
     description:
       'Рабочие состояния становятся почти интерфейсом личности, переключаясь также быстро, как режимы программы.',
   },
@@ -203,9 +290,11 @@ export function getWorksBySeriesId(seriesId: string): Work[] {
   return works.filter((work) => work.seriesId === seriesId)
 }
 
-/** Основное изображение + доп. кадры для галереи */
+/** main + detail1, detail2... (из папки работы) или явные galleryImages */
 export function getWorkGallery(work: Work): string[] {
-  const images = [work.image, ...(work.galleryImages ?? [])].filter(
+  const autoDetails = getSeriesWorkDetails(work.id)
+  const extras = autoDetails.length > 0 ? autoDetails : (work.galleryImages ?? [])
+  const images = [work.image, ...extras].filter(
     (src): src is string => Boolean(src),
   )
   return [...new Set(images)]
@@ -213,6 +302,23 @@ export function getWorkGallery(work: Work): string[] {
 
 export function workPath(id: string): string {
   return `/works/${id}`
+}
+
+const standaloneTitlesRu: Record<string, string> = {
+  'cut-to-fit': 'Подогнать по форме',
+  'holding-it-in': 'Держать в себе',
+}
+
+/** Русское название работы (из серии или каталога) */
+export function getWorkTitleRu(work: Work): string {
+  if (work.seriesId) {
+    const seriesWork = getSeriesById(work.seriesId)?.works.find(
+      (item) => item.id === work.id,
+    )
+    if (seriesWork?.titleRu) return seriesWork.titleRu
+  }
+
+  return standaloneTitlesRu[work.id] ?? work.title
 }
 
 export function formatPrice(price: number): string {

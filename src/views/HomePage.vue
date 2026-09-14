@@ -1,14 +1,14 @@
 <template>
   <HeroBanner :data="homeHero" />
   <FeaturedWorks :works="featuredWorks" />
-  <PaintingSpotlight :paintings="spotlightPaintings" />
+  <ArtistSpotlight :spotlight="artistSpotlight" />
 </template>
 
 <script setup lang="ts">
 import HeroBanner from '../components/home/HeroBanner.vue'
 import FeaturedWorks from '../components/home/FeaturedWorks.vue'
-import PaintingSpotlight from '../components/home/PaintingSpotlight.vue'
+import ArtistSpotlight from '../components/home/ArtistSpotlight.vue'
 import { homeHero } from '../data/homeHero'
 import { featuredWorks } from '../data/featuredWorks'
-import { spotlightPaintings } from '../data/spotlightPaintings'
+import { artistSpotlight } from '../data/artistSpotlight'
 </script>
