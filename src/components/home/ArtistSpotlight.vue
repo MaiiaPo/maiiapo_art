@@ -1,5 +1,5 @@
 <template>
-  <section class="spotlight" aria-label="О художнице">
+  <section class="spotlight" :aria-label="t('home.spotlightLabel')">
     <div class="spotlight__inner">
       <div class="spotlight__visual">
         <img
@@ -10,11 +10,11 @@
       </div>
 
       <div class="spotlight__copy">
-        <p class="spotlight__label">[ {{ spotlight.label }} ]</p>
-        <h2 class="spotlight__lead">{{ spotlight.lead }}</h2>
-        <p class="spotlight__text">{{ spotlight.text }}</p>
+        <p class="spotlight__label">[ {{ t('home.spotlightLabel') }} ]</p>
+        <h2 class="spotlight__lead">{{ t('home.spotlightLead') }}</h2>
+        <p class="spotlight__text">{{ t('home.spotlightText') }}</p>
         <RouterLink class="spotlight__cta" :to="spotlight.ctaTo">
-          {{ spotlight.ctaLabel }}
+          {{ t('home.spotlightCta') }}
           <span class="spotlight__arrow" aria-hidden="true">→</span>
         </RouterLink>
       </div>
@@ -25,10 +25,13 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import type { ArtistSpotlight } from '../../data/artistSpotlight'
+import { useI18n } from '../../i18n'
 
 defineProps<{
   spotlight: ArtistSpotlight
 }>()
+
+const { t } = useI18n()
 </script>
 
 <style scoped>

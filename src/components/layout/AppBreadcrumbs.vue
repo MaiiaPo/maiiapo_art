@@ -2,11 +2,15 @@
   <nav
     v-if="crumbs.length"
     class="app-breadcrumbs"
-    aria-label="Хлебные крошки"
+    :aria-label="t('breadcrumbs.aria')"
   >
     <ol class="app-breadcrumbs__list">
       <li class="app-breadcrumbs__item">
-        <RouterLink class="app-breadcrumbs__home" to="/" aria-label="Главная">
+        <RouterLink
+          class="app-breadcrumbs__home"
+          to="/"
+          :aria-label="t('breadcrumbs.home')"
+        >
           <svg
             class="app-breadcrumbs__home-icon"
             viewBox="0 0 16 16"
@@ -53,6 +57,11 @@ import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { getSeriesById } from '../../data/series'
 import { getWorkById } from '../../data/works'
+import { useI18n } from '../../i18n'
+import {
+  getSeriesDisplayTitle,
+  getWorkDisplayTitle,
+} from '../../i18n/content'
 
 type Crumb = {
   label: string
@@ -60,54 +69,52 @@ type Crumb = {
 }
 
 const route = useRoute()
+const { t, locale } = useI18n()
 
 const crumbs = computed<Crumb[]>(() => {
   switch (route.name) {
     case 'home':
       return []
     case 'series':
-      return [{ label: 'Серии' }]
+      return [{ label: t('breadcrumbs.series') }]
     case 'series-detail': {
       const id = route.params.id
       const series = typeof id === 'string' ? getSeriesById(id) : undefined
       return [
-        { label: 'Серии', to: '/series' },
-        { label: series?.titleRu ?? 'Серия' },
+        { label: t('breadcrumbs.series'), to: '/series' },
+        {
+          label: series
+            ? getSeriesDisplayTitle(series, locale.value)
+            : t('breadcrumbs.seriesFallback'),
+        },
       ]
     }
     case 'works':
-      return [{ label: 'Работы' }]
+      return [{ label: t('breadcrumbs.works') }]
     case 'work-detail': {
       const id = route.params.id
       const work = typeof id === 'string' ? getWorkById(id) : undefined
       return [
-        { label: 'Работы', to: '/works' },
-        { label: workLabel(work) },
+        { label: t('breadcrumbs.works'), to: '/works' },
+        {
+          label: work
+            ? getWorkDisplayTitle(work, locale.value)
+            : t('breadcrumbs.workFallback'),
+        },
       ]
     }
     case 'about':
-      return [{ label: 'О художнице' }]
+      return [{ label: t('breadcrumbs.about') }]
     case 'contacts':
-      return [{ label: 'Контакты' }]
+      return [{ label: t('breadcrumbs.contacts') }]
     case 'privacy':
-      return [{ label: 'Политика конфиденциальности' }]
+      return [{ label: t('breadcrumbs.privacy') }]
+    case 'consent':
+      return [{ label: t('breadcrumbs.consent') }]
     default:
       return []
   }
 })
-
-function workLabel(work: ReturnType<typeof getWorkById>): string {
-  if (!work) return 'Работа'
-
-  if (work.seriesId) {
-    const seriesWork = getSeriesById(work.seriesId)?.works.find(
-      (item) => item.id === work.id,
-    )
-    if (seriesWork?.titleRu) return seriesWork.titleRu
-  }
-
-  return work.title
-}
 </script>
 
 <style scoped>
@@ -163,7 +170,6 @@ function workLabel(work: ReturnType<typeof getWorkById>): string {
   display: block;
   width: 13px;
   height: 13px;
-  /* Uppercase text sits optically lower than the SVG’s geometric center */
   transform: translateY(1px);
 }
 

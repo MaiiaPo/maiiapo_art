@@ -1,17 +1,18 @@
 <template>
   <section class="works-page">
+    <div class="works-page__inner">
     <header class="works-page__header">
-      <h1 class="works-page__title">Работы</h1>
+      <h1 class="works-page__title">{{ t('works.title') }}</h1>
       <p class="works-page__lead">
-        Каждая работа исследует, как цифровая среда меняет человека.
+        {{ t('works.lead') }}
       </p>
       <p class="works-page__count">
-        {{ formatWorksCount(works.length) }},
-        {{ formatSeriesCount(seriesList.length) }}
+        {{ worksCount }},
+        {{ seriesCount }}
       </p>
     </header>
 
-    <div class="works-page__filters" aria-label="Фильтры">
+    <div class="works-page__filters" :aria-label="t('works.filtersAria')">
       <!-- TODO: фильтры (серия, размер, год, материал, наличие) -->
       <div class="works-page__toolbar">
         <div class="works-page__chips">
@@ -21,17 +22,17 @@
             :class="{ 'works-page__chip--active': selectedSeries === 'all' }"
             @click="selectedSeries = 'all'"
           >
-            Все работы
+            {{ t('works.all') }}
           </button>
           <button
-            v-for="item in seriesList"
+            v-for="item in catalogSeries"
             :key="item.id"
             type="button"
             class="works-page__chip"
             :class="{ 'works-page__chip--active': selectedSeries === item.id }"
             @click="selectedSeries = item.id"
           >
-            {{ item.title }}
+            {{ isEn ? item.title : item.titleRu }}
           </button>
           <button
             type="button"
@@ -39,7 +40,7 @@
             :class="{ 'works-page__chip--active': selectedSeries === 'none' }"
             @click="selectedSeries = 'none'"
           >
-            Без серии
+            {{ t('works.noSeries') }}
           </button>
         </div>
 
@@ -54,8 +55,9 @@
     </ul>
 
     <p v-if="visibleWorks.length === 0" class="works-page__empty">
-      Пока нет работ в этом фильтре
+      {{ t('works.empty') }}
     </p>
+    </div>
   </section>
 </template>
 
@@ -63,18 +65,45 @@
 import { computed, ref } from 'vue'
 import SortDropdown, { type SortOptionValue } from '../components/works/SortDropdown.vue'
 import WorkCard from '../components/works/WorkCard.vue'
-import { formatSeriesCount, seriesList } from '../data/series'
-import { formatWorksCount, works, type Work } from '../data/works'
+import { seriesList } from '../data/series'
+import { works, type Work } from '../data/works'
+import {
+  formatSeriesCountLocalized,
+  formatWorksCountLocalized,
+  useI18n,
+} from '../i18n'
+
+const { t, isEn, locale } = useI18n()
 
 const selectedSeries = ref<'all' | 'none' | string>('all')
 const sortBy = ref<SortOptionValue>('newest')
 
+/** Неготовые работы (listed: false) не показываем в каталоге */
+const catalogWorks = computed(() =>
+  works.filter((work) => work.listed !== false),
+)
+
+const catalogSeries = computed(() =>
+  seriesList.filter((item) =>
+    catalogWorks.value.some((work) => work.seriesId === item.id),
+  ),
+)
+
+const worksCount = computed(() =>
+  formatWorksCountLocalized(catalogWorks.value.length, locale.value),
+)
+const seriesCount = computed(() =>
+  formatSeriesCountLocalized(catalogSeries.value.length, locale.value),
+)
+
 const filteredWorks = computed(() => {
-  if (selectedSeries.value === 'all') return works
+  if (selectedSeries.value === 'all') return catalogWorks.value
   if (selectedSeries.value === 'none') {
-    return works.filter((work) => work.seriesId === null)
+    return catalogWorks.value.filter((work) => work.seriesId === null)
   }
-  return works.filter((work) => work.seriesId === selectedSeries.value)
+  return catalogWorks.value.filter(
+    (work) => work.seriesId === selectedSeries.value,
+  )
 })
 
 const visibleWorks = computed(() => {
@@ -103,6 +132,11 @@ const visibleWorks = computed(() => {
 <style scoped>
 .works-page {
   padding: 56px 40px 72px;
+}
+
+.works-page__inner {
+  max-width: 1200px;
+  margin-inline: auto;
 }
 
 .works-page__header {

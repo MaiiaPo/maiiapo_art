@@ -11,33 +11,26 @@
         </div>
 
         <blockquote class="about-page__quote">
-          <p class="about-page__quote-text">«{{ aboutPage.quote }}»</p>
+          <p class="about-page__quote-text">«{{ t('about.quote') }}»</p>
         </blockquote>
       </div>
 
       <div class="about-page__content">
         <header class="about-page__header">
           <h1 id="about-page-title" class="about-page__title">
-            {{ aboutPage.title }}
+            {{ t('about.title') }}
           </h1>
           <p class="about-page__name">{{ aboutPage.name }}</p>
           <p class="about-page__meta">
-            <span
-              v-for="(line, index) in aboutPage.metaLines"
-              :key="line"
-              class="about-page__meta-line"
-            >
-              <template v-if="index > 0">
-                <span class="about-page__meta-sep" aria-hidden="true">|</span>
-              </template>
-              {{ line }}
-            </span>
+            <span class="about-page__meta-line">{{ t('about.metaPerm') }}</span>
+            <span class="about-page__meta-sep" aria-hidden="true">|</span>
+            <span class="about-page__meta-line">{{ t('about.metaMoscow') }}</span>
           </p>
         </header>
 
         <dl class="about-page__sections">
           <div
-            v-for="section in aboutPage.sections"
+            v-for="section in sections"
             :key="section.label"
             class="about-page__row"
           >
@@ -55,7 +48,7 @@
                 type="button"
                 @click="openManifest"
               >
-                Манифест
+                {{ t('about.manifesto') }}
               </button>
             </dd>
           </div>
@@ -63,89 +56,38 @@
       </div>
     </div>
 
-    <Teleport to="body">
-      <div
-        v-if="manifestOpen"
-        class="about-manifest"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="about-manifest-title"
-        @click.self="closeManifest"
-      >
-        <div
-          class="about-manifest__panel"
-          ref="panelRef"
-          tabindex="-1"
-        >
-          <div class="about-manifest__top">
-            <h2 id="about-manifest-title" class="about-manifest__title">
-              {{ aboutPage.manifesto.title }}
-            </h2>
-            <button
-              class="about-manifest__close"
-              type="button"
-              aria-label="Закрыть"
-              @click="closeManifest"
-            >
-              ×
-            </button>
-          </div>
-
-          <div class="about-manifest__body">
-            <p
-              v-for="(paragraph, index) in aboutPage.manifesto.paragraphs"
-              :key="index"
-              class="about-manifest__p"
-            >
-              <template
-                v-for="(line, lineIndex) in paragraph.split('\n')"
-                :key="`${index}-${lineIndex}`"
-              >
-                <br v-if="lineIndex > 0" />
-                {{ line }}
-              </template>
-            </p>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <ManifestDialog v-model:open="manifestOpen" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
+import ManifestDialog from '../components/about/ManifestDialog.vue'
 import { aboutPage } from '../data/aboutPage'
+import { useI18n } from '../i18n'
 
+const { t } = useI18n()
 const manifestOpen = ref(false)
-const panelRef = ref<HTMLElement | null>(null)
 
-watch(manifestOpen, async (open) => {
-  document.body.style.overflow = open ? 'hidden' : ''
-  if (open) {
-    await nextTick()
-    panelRef.value?.focus()
-  }
-})
+const sections = computed(() => [
+  {
+    label: t('about.education'),
+    paragraphs: [t('about.educationText')],
+  },
+  {
+    label: t('about.practice'),
+    paragraphs: [t('about.practiceText')],
+  },
+  {
+    label: t('about.art'),
+    withManifest: true,
+    paragraphs: [t('about.artP1'), t('about.artP2'), t('about.artP3')],
+  },
+])
 
 function openManifest() {
   manifestOpen.value = true
 }
-
-function closeManifest() {
-  manifestOpen.value = false
-}
-
-function onKeydown(event: KeyboardEvent) {
-  if (!manifestOpen.value) return
-  if (event.key === 'Escape') closeManifest()
-}
-
-window.addEventListener('keydown', onKeydown)
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', onKeydown)
-  document.body.style.overflow = ''
-})
 </script>
 
 <style scoped>
@@ -320,86 +262,6 @@ onUnmounted(() => {
   opacity: 0.7;
 }
 
-.about-manifest {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(21, 21, 21, 0.45);
-  box-sizing: border-box;
-}
-
-.about-manifest__panel {
-  display: flex;
-  flex-direction: column;
-  width: min(560px, 100%);
-  max-height: min(80vh, 720px);
-  padding: 28px 28px 32px;
-  border: 0;
-  background: #f7f7f7;
-  color: #151515;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
-  outline: none;
-  overflow: hidden;
-}
-
-.about-manifest__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-shrink: 0;
-}
-
-.about-manifest__title {
-  margin: 0;
-  font-family: "Oswald", sans-serif;
-  font-size: clamp(24px, 3vw, 32px);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-.about-manifest__close {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  margin: -4px -8px 0 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #151515;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.about-manifest__close:hover {
-  opacity: 0.55;
-}
-
-.about-manifest__body {
-  display: grid;
-  gap: 16px;
-  overflow: auto;
-  padding-right: 4px;
-}
-
-.about-manifest__p {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  font-size: 14px;
-  line-height: 1.55;
-  color: #333;
-  white-space: pre-line;
-}
-
 @media (max-width: 900px) {
   .about-page__inner {
     grid-template-columns: 1fr;
@@ -423,15 +285,6 @@ onUnmounted(() => {
 
   .about-page__quote {
     margin-top: 16px;
-  }
-
-  .about-manifest {
-    padding: 16px;
-  }
-
-  .about-manifest__panel {
-    padding: 22px 18px 28px;
-    max-height: 85vh;
   }
 }
 </style>

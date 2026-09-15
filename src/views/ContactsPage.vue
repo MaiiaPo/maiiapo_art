@@ -2,12 +2,13 @@
   <section class="about" aria-labelledby="contacts-title">
     <div class="about__inner">
     <div class="about__copy">
-      <p class="about__label">[ {{ aboutArtist.label }} ]</p>
+      <p class="about__label">[ {{ t('contacts.label') }} ]</p>
       <h1 id="contacts-title" class="about__title">
-        <span>На</span>
-        <span>связи</span>
+        <span v-for="(line, index) in tList('contacts.titleLines')" :key="index">
+          {{ line }}
+        </span>
       </h1>
-      <p class="about__intro">{{ aboutArtist.intro }}</p>
+      <p class="about__intro">{{ t('contacts.intro') }}</p>
 
       <dl class="about__contacts">
         <div
@@ -32,24 +33,24 @@
       </dl>
 
       <div class="about__form-block">
-        <p class="about__form-lead">{{ aboutArtist.formLead }}</p>
+        <p class="about__form-lead">{{ t('contacts.formLead') }}</p>
         <form class="about__form" @submit.prevent="onSubmit">
           <label class="about__field">
-            <span class="visually-hidden">{{ aboutArtist.formPlaceholder }}</span>
+            <span class="visually-hidden">{{ t('contacts.placeholder') }}</span>
             <input
               v-model="contact"
               class="about__input"
               type="text"
               name="contact"
               autocomplete="email"
-              :placeholder="aboutArtist.formPlaceholder"
+              :placeholder="t('contacts.placeholder')"
               :disabled="status === 'sending' || status === 'success'"
               required
             />
             <button
               class="about__submit"
               type="submit"
-              aria-label="Отправить"
+              :aria-label="t('contacts.send')"
               :disabled="status === 'sending' || status === 'success'"
             >
               →
@@ -85,7 +86,7 @@
       />
       <p class="about__slogan">
         <span
-          v-for="(line, index) in aboutArtist.slogan"
+          v-for="(line, index) in slogan"
           :key="index"
           class="about__slogan-line"
         >
@@ -101,22 +102,25 @@
 import { computed, ref } from 'vue'
 import { aboutArtist } from '../data/aboutArtist'
 import { sendSiteContact } from '../services/sendSiteContact'
+import { useI18n } from '../i18n'
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
 
+const { t, tList } = useI18n()
 const contact = ref('')
 const status = ref<FormStatus>('idle')
+const slogan = computed(() => tList('contacts.slogan'))
 
 const statusMessage = computed(() => {
   switch (status.value) {
     case 'sending':
-      return 'Отправляю…'
+      return t('contacts.sending')
     case 'success':
-      return 'Спасибо! Сообщение отправлено.'
+      return t('contacts.success')
     case 'error':
-      return 'Не удалось отправить. Попробуйте еще раз или напишите на почту.'
+      return t('contacts.error')
     default:
-      return aboutArtist.formNote
+      return t('contacts.note')
   }
 })
 

@@ -19,8 +19,8 @@
   </section>
 
   <section v-else class="work-detail work-detail--empty">
-    <h1>Работа не найдена</h1>
-    <RouterLink to="/works">← Все работы</RouterLink>
+    <h1>{{ t('works.notFound') }}</h1>
+    <RouterLink to="/works">{{ t('works.allWorks') }}</RouterLink>
   </section>
 </template>
 
@@ -32,7 +32,9 @@ import WorkInfo from '../components/works/WorkInfo.vue'
 import WorkSeriesOthers from '../components/works/WorkSeriesOthers.vue'
 import { getSeriesById, seriesPath } from '../data/series'
 import { getWorkById, getWorkGallery } from '../data/works'
+import { useI18n } from '../i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 
 const work = computed(() => {

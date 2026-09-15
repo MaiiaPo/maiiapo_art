@@ -1,47 +1,55 @@
 <template>
   <div class="work-info">
-    <p class="work-info__label">[ оригинальная работа ]</p>
-    <h1 class="work-info__title">{{ titleRu }}</h1>
-    <p v-if="titleEn" class="work-info__title-en">{{ titleEn }}</p>
+    <p class="work-info__label">{{ t('works.original') }}</p>
+    <h1 class="work-info__title">{{ displayTitle }}</h1>
+    <p v-if="subtitle" class="work-info__title-en">{{ subtitle }}</p>
+
+    <p v-if="series" class="work-info__series">
+      <span class="work-info__series-label">{{ t('works.fromSeries') }}</span>
+      <span class="work-info__series-arrow" aria-hidden="true">→</span>
+      <RouterLink class="work-info__series-link" :to="seriesPath(series.id)">
+        {{ seriesTitle }}
+      </RouterLink>
+    </p>
 
     <ul class="work-info__meta">
       <li>{{ work.year }}</li>
-      <li>{{ work.medium }}</li>
-      <li>{{ work.size }}</li>
+      <li>{{ medium }}</li>
+      <li>{{ size }}</li>
     </ul>
 
     <p
       class="work-info__status"
       :class="`work-info__status--${work.status}`"
     >
-      {{ workStatusLabel[work.status] }}
+      {{ t(`status.${work.status}`) }}
     </p>
-    <p v-if="work.status !== 'sold' && work.price > 0" class="work-info__price">
+    <p v-if="shouldShowWorkPrice(work)" class="work-info__price">
       {{ formatPrice(work.price) }}
     </p>
 
     <button
-      v-if="work.status !== 'sold'"
+      v-if="work.status === 'available'"
       class="work-info__order"
       type="button"
       @click="openOrder"
     >
-      Заказать работу
+      {{ t('works.order') }}
     </button>
 
     <div class="work-info__blocks">
-      <section v-if="work.description" class="work-info__block">
-        <h2 class="work-info__block-title">О работе</h2>
-        <p class="work-info__about">{{ work.description }}</p>
+      <section v-if="description" class="work-info__block">
+        <h2 class="work-info__block-title">{{ t('works.aboutWork') }}</h2>
+        <p class="work-info__about">{{ description }}</p>
       </section>
 
       <section class="work-info__block">
-        <h2 class="work-info__block-title">Детали</h2>
+        <h2 class="work-info__block-title">{{ t('works.details') }}</h2>
         <ul class="work-info__details">
-          <li><span>Год</span>{{ work.year }}</li>
-          <li><span>Техника</span>{{ work.medium }}</li>
-          <li><span>Размер</span>{{ work.size }}</li>
-          <li><span>Статус</span>{{ workStatusLabel[work.status] }}</li>
+          <li><span>{{ t('works.year') }}</span>{{ work.year }}</li>
+          <li><span>{{ t('works.medium') }}</span>{{ medium }}</li>
+          <li><span>{{ t('works.size') }}</span>{{ size }}</li>
+          <li><span>{{ t('works.status') }}</span>{{ t(`status.${work.status}`) }}</li>
         </ul>
       </section>
     </div>
@@ -59,7 +67,7 @@
           <button
             class="work-order__close"
             type="button"
-            aria-label="Закрыть"
+            :aria-label="t('works.orderClose')"
             :disabled="status === 'sending'"
             @click="closeOrder"
           >
@@ -67,22 +75,22 @@
           </button>
 
           <h2 id="work-order-title" class="work-order__title">
-            Заказать работу
+            {{ t('works.order') }}
           </h2>
           <p class="work-order__lead">
-            Оставьте свой контакт — и я вам напишу
+            {{ t('works.orderLead') }}
           </p>
 
           <form class="work-order__form" @submit.prevent="onSubmit">
             <label class="work-order__field">
-              <span class="visually-hidden">Ваш e-mail или Telegram</span>
+              <span class="visually-hidden">{{ t('works.orderContact') }}</span>
               <input
                 v-model="contact"
                 class="work-order__input"
                 type="text"
                 name="contact"
                 autocomplete="email"
-                placeholder="Ваш e-mail или Telegram"
+                :placeholder="t('works.orderContact')"
                 :disabled="status === 'sending' || status === 'success'"
                 required
               />
@@ -94,7 +102,7 @@
                 type="submit"
                 :disabled="status === 'sending' || status === 'success'"
               >
-                {{ status === 'sending' ? 'Отправляю…' : 'Отправить' }}
+                {{ status === 'sending' ? t('works.orderSending') : t('works.orderSend') }}
               </button>
               <button
                 class="work-order__cancel"
@@ -102,7 +110,7 @@
                 :disabled="status === 'sending'"
                 @click="closeOrder"
               >
-                Закрыть
+                {{ t('works.orderClose') }}
               </button>
             </div>
           </form>
@@ -126,21 +134,45 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { RouterLink } from 'vue-router'
+import { getSeriesById, seriesPath } from '../../data/series'
 import {
   formatPrice,
-  getWorkTitleRu,
-  workStatusLabel,
+  shouldShowWorkPrice,
   type Work,
 } from '../../data/works'
+import { localizeMedium, localizeSize, useI18n } from '../../i18n'
+import {
+  getSeriesDisplayTitle,
+  getWorkDescription,
+  getWorkDisplayTitle,
+  getWorkSubtitle,
+} from '../../i18n/content'
 import { sendSiteContact } from '../../services/sendSiteContact'
 
 const props = defineProps<{
   work: Work
 }>()
 
-const titleRu = computed(() => getWorkTitleRu(props.work))
-const titleEn = computed(() =>
-  titleRu.value === props.work.title ? '' : props.work.title,
+const { t, locale } = useI18n()
+
+const displayTitle = computed(() =>
+  getWorkDisplayTitle(props.work, locale.value),
+)
+const subtitle = computed(() => getWorkSubtitle(props.work, locale.value))
+const description = computed(() =>
+  getWorkDescription(props.work, locale.value),
+)
+const medium = computed(() => localizeMedium(props.work.medium, locale.value))
+const size = computed(() => localizeSize(props.work.size, locale.value))
+
+const series = computed(() => {
+  const id = props.work.seriesId
+  return id ? getSeriesById(id) : undefined
+})
+
+const seriesTitle = computed(() =>
+  series.value ? getSeriesDisplayTitle(series.value, locale.value) : '',
 )
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
@@ -153,9 +185,9 @@ const panelRef = ref<HTMLElement | null>(null)
 const statusMessage = computed(() => {
   switch (status.value) {
     case 'success':
-      return 'Спасибо! Сообщение отправлено.'
+      return t('works.orderSuccess')
     case 'error':
-      return 'Не удалось отправить. Попробуйте еще раз или напишите на почту.'
+      return t('works.orderError')
     default:
       return ''
   }
@@ -189,7 +221,7 @@ async function onSubmit() {
   try {
     await sendSiteContact({
       contact: value,
-      workTitle: `${titleRu.value} / ${props.work.title}`,
+      workTitle: `${displayTitle.value} / ${props.work.title}`,
       workId: props.work.id,
     })
     status.value = 'success'
@@ -246,6 +278,35 @@ onUnmounted(() => {
   color: #8a8a8a;
 }
 
+.work-info__series {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
+  margin: 0 0 16px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.work-info__series-label,
+.work-info__series-arrow {
+  color: #151515;
+}
+
+.work-info__series-link {
+  color: #d51d78;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.work-info__series-link:hover {
+  opacity: 0.65;
+}
+
 .work-info__meta {
   display: grid;
   gap: 4px;
@@ -272,6 +333,10 @@ onUnmounted(() => {
 
 .work-info__status--reserved {
   color: #b45f00;
+}
+
+.work-info__status--in-progress {
+  color: #888;
 }
 
 .work-info__price {
@@ -327,6 +392,7 @@ onUnmounted(() => {
   font-size: 14px;
   line-height: 1.55;
   color: #444;
+  white-space: pre-line;
 }
 
 .work-info__details {

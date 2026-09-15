@@ -1,7 +1,7 @@
 <template>
-  <nav class="main-nav" aria-label="Основная навигация">
+  <nav class="main-nav" :aria-label="t('nav.aria')">
     <ul class="main-nav__list">
-      <li v-for="item in navItems" :key="item.to">
+      <li v-for="item in items" :key="item.to">
         <RouterLink
           v-slot="{ href, navigate, isActive, isExactActive }"
           :to="item.to"
@@ -24,8 +24,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { navItems } from '../../constants/navigation'
+import { useI18n } from '../../i18n'
+
+const { t } = useI18n()
+
+const items = computed(() => [
+  { label: t('nav.home'), to: '/' },
+  { label: t('nav.series'), to: '/series' },
+  { label: t('nav.works'), to: '/works' },
+  { label: t('nav.about'), to: '/about' },
+  { label: t('nav.contacts'), to: '/contacts' },
+])
 </script>
 
 <style scoped>

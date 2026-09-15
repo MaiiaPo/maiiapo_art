@@ -7,7 +7,7 @@
       aria-haspopup="listbox"
       @click="open = !open"
     >
-      Сортировка:
+      {{ t('works.sort') }}
       <span class="sort-dropdown__value">{{ currentLabel }}</span>
       <span class="sort-dropdown__chevron" aria-hidden="true" />
     </button>
@@ -16,7 +16,7 @@
       v-if="open"
       class="sort-dropdown__menu"
       role="listbox"
-      aria-label="Варианты сортировки"
+      :aria-label="t('works.sortAria')"
     >
       <button
         v-for="option in options"
@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from '../../i18n'
 
 export type SortOptionValue = 'newest' | 'price-asc' | 'price-desc'
 
@@ -48,17 +49,19 @@ const emit = defineEmits<{
   'update:modelValue': [value: SortOptionValue]
 }>()
 
-const options: { value: SortOptionValue; label: string }[] = [
-  { value: 'newest', label: 'Новинки' },
-  { value: 'price-asc', label: 'Сначала дешевле' },
-  { value: 'price-desc', label: 'Сначала дороже' },
-]
+const { t } = useI18n()
+
+const options = computed(() => [
+  { value: 'newest' as const, label: t('works.newest') },
+  { value: 'price-asc' as const, label: t('works.priceAsc') },
+  { value: 'price-desc' as const, label: t('works.priceDesc') },
+])
 
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 
 const currentLabel = computed(
-  () => options.find((option) => option.value === props.modelValue)?.label ?? '',
+  () => options.value.find((option) => option.value === props.modelValue)?.label ?? '',
 )
 
 function select(value: SortOptionValue) {

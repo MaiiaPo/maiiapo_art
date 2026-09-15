@@ -11,11 +11,11 @@
             />
           </RouterLink>
           <p class="app-footer__tagline">
-            О человеке в цифровой среде. Картины, которые задают вопросы.
+            {{ t('footer.tagline') }}
           </p>
         </div>
 
-        <nav class="app-footer__columns" aria-label="Навигация в подвале">
+        <nav class="app-footer__columns" :aria-label="t('footer.navAria')">
           <div
             v-for="column in footerColumns"
             :key="column.title"
@@ -31,6 +31,14 @@
                 >
                   {{ item.label }}
                 </RouterLink>
+                <button
+                  v-else-if="item.action === 'manifest'"
+                  class="app-footer__link app-footer__link--button"
+                  type="button"
+                  @click="openManifest"
+                >
+                  {{ item.label }}
+                </button>
                 <span v-else class="app-footer__link app-footer__link--muted">
                   {{ item.label }}
                 </span>
@@ -40,7 +48,7 @@
         </nav>
 
         <div class="app-footer__follow">
-          <p class="app-footer__column-title">Следить</p>
+          <p class="app-footer__column-title">{{ t('footer.follow') }}</p>
           <ul class="app-footer__socials">
             <li>
               <a
@@ -69,7 +77,7 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fill="currentColor"
-                    d="M21.8 4.2 2.9 11.5c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.7.4.9 1 .9.6 0 .9-.3 1.2-.6l2.8-2.7 5.8 4.3c1.1.6 1.8.3 2.1-1l3.7-17.4c.4-1.5-.5-2.2-1.9-1.7zM9.7 14.7l-.3 3.7-1.2-3.9 11-6.8z"
+                    d="M9.78 18.65 10.06 14.42 17.74 7.5c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3L19.81 4.54c.73-.33 1.43.18 1.15 1.3L18.24 16.84c-.19.82-.68 1.02-1.38.65L12.74 14.43 10.68 16.43c-.23.24-.41.42-.9 2.22Z"
                   />
                 </svg>
               </a>
@@ -80,46 +88,58 @@
 
       <div class="app-footer__bar">
         <p class="app-footer__copy">
-          © 2026 Maiia Po. Все права защищены.
+          {{ t('footer.copyright') }}
         </p>
         <div class="app-footer__legal">
           <RouterLink class="app-footer__legal-link" to="/privacy">
-            Политика конфиденциальности
+            {{ t('footer.privacy') }}
           </RouterLink>
           <span class="app-footer__legal-sep" aria-hidden="true">|</span>
-          <RouterLink class="app-footer__legal-link" to="/privacy">
-            Согласие на обработку персональных данных
+          <RouterLink class="app-footer__legal-link" to="/consent">
+            {{ t('footer.consent') }}
           </RouterLink>
         </div>
       </div>
     </div>
+
+    <ManifestDialog v-model:open="manifestOpen" />
   </footer>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import ManifestDialog from '../about/ManifestDialog.vue'
 import logo from '../../assets/artist/logo.png'
+import { useI18n } from '../../i18n'
 
-const footerColumns = [
+const { t } = useI18n()
+const manifestOpen = ref(false)
+
+function openManifest() {
+  manifestOpen.value = true
+}
+
+const footerColumns = computed(() => [
   {
-    title: 'Работы',
+    title: t('footer.works'),
     links: [
-      { label: 'Каталог', to: '/works' },
-      { label: 'Серии', to: '/series' },
+      { label: t('footer.catalog'), to: '/works' },
+      { label: t('footer.series'), to: '/series' },
     ],
   },
   {
-    title: 'Обо мне',
+    title: t('footer.aboutMe'),
     links: [
-      { label: 'О художнице', to: '/about' },
-      { label: 'Манифест', to: undefined },
+      { label: t('footer.aboutArtist'), to: '/about' },
+      { label: t('footer.manifesto'), action: 'manifest' as const },
     ],
   },
   {
-    title: 'Полезное',
-    links: [{ label: 'Контакты', to: '/contacts' }],
+    title: t('footer.useful'),
+    links: [{ label: t('footer.contacts'), to: '/contacts' }],
   },
-] as const
+])
 </script>
 
 <style scoped>
@@ -138,7 +158,7 @@ const footerColumns = [
 
 .app-footer__main {
   display: grid;
-  grid-template-columns: minmax(200px, 1.1fr) minmax(320px, 2fr) auto;
+  grid-template-columns: minmax(200px, 1.1fr) minmax(320px, 2fr) minmax(88px, auto);
   gap: 40px 48px;
   align-items: start;
   padding-bottom: 40px;
@@ -213,14 +233,35 @@ const footerColumns = [
   color: #151515;
 }
 
+.app-footer__link--button {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #555;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-footer__link--button:hover {
+  color: #151515;
+}
+
 .app-footer__link--muted {
   color: #999;
   cursor: default;
 }
 
 .app-footer__follow {
+  min-width: 88px;
   padding-left: 28px;
   border-left: 1px solid #e5e5e5;
+  overflow: visible;
 }
 
 .app-footer__socials {
@@ -233,16 +274,20 @@ const footerColumns = [
 
 .app-footer__social {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
   color: #151515;
+  overflow: visible;
 }
 
 .app-footer__social svg {
+  display: block;
   width: 20px;
   height: 20px;
+  overflow: visible;
 }
 
 .app-footer__social:hover {

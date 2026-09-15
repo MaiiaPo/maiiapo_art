@@ -56,7 +56,6 @@ defineProps<{
 <style scoped>
 .series-about {
   padding: 56px 40px;
-  background: #f3f3f3;
   color: #151515;
 }
 

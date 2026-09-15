@@ -53,6 +53,11 @@ const router = createRouter({
       name: 'privacy',
       component: () => import('../views/PrivacyPage.vue'),
     },
+    {
+      path: '/consent',
+      name: 'consent',
+      component: () => import('../views/ConsentPage.vue'),
+    },
   ],
   scrollBehavior() {
     return { top: 0 }

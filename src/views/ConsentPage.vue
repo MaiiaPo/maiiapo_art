@@ -1,11 +1,11 @@
 <template>
   <LegalDocumentView
-    :document="privacyPolicy"
-    title-id="privacy-page-title"
+    :document="personalDataConsent"
+    title-id="consent-page-title"
   />
 </template>
 
 <script setup lang="ts">
 import LegalDocumentView from '../components/legal/LegalDocumentView.vue'
-import { privacyPolicy } from '../data/legal'
+import { personalDataConsent } from '../data/legal'
 </script>

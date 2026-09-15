@@ -8,29 +8,29 @@
     <div v-if="isTeaser" class="series-process__teaser">
       <div class="series-process__teaser-inner">
         <div class="series-process__teaser-copy">
-          <p class="series-process__teaser-label">[ {{ process.label }} ]</p>
+          <p class="series-process__teaser-label">[ {{ processLabel }} ]</p>
           <h2 id="series-process-teaser-title" class="series-process__teaser-title">
-            {{ process.title }}
+            {{ processTitle }}
           </h2>
-          <p class="series-process__teaser-text">{{ process.text }}</p>
+          <p class="series-process__teaser-text">{{ processText }}</p>
         </div>
 
         <div
           class="series-process__teaser-visual"
           :style="{ backgroundImage: `url(${process.coverImage})` }"
           role="img"
-          :aria-label="process.title"
+          :aria-label="processTitle"
         />
       </div>
     </div>
 
     <div v-else class="series-process__inner">
       <div class="series-process__copy">
-        <p class="series-process__label">[ {{ process.label }} ]</p>
+        <p class="series-process__label">[ {{ processLabel }} ]</p>
         <h2 id="series-process-title" class="series-process__title">
-          {{ process.title }}
+          {{ processTitle }}
         </h2>
-        <p class="series-process__text">{{ process.text }}</p>
+        <p class="series-process__text">{{ processText }}</p>
       </div>
 
       <div class="series-process__gallery-wrap">
@@ -79,16 +79,27 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { SeriesProcess } from '../../data/seriesProcess'
+import { useI18n } from '../../i18n'
 
 const props = defineProps<{
   process: SeriesProcess
 }>()
+
+const { t } = useI18n()
 
 const pageSize = 4
 const pageIndex = ref(0)
 
 const isTeaser = computed(
   () => (props.process.variant ?? 'gallery') === 'teaser',
+)
+
+const processLabel = computed(() => t('series.process'))
+const processTitle = computed(() =>
+  isTeaser.value ? t('series.processSoonTitle') : t('series.processTitle'),
+)
+const processText = computed(() =>
+  isTeaser.value ? t('series.processSoonText') : t('series.processText'),
 )
 
 const hasContent = computed(
@@ -127,7 +138,6 @@ function next() {
 <style scoped>
 .series-process {
   padding: 56px 40px;
-  background: #f3f3f3;
   color: #151515;
 }
 

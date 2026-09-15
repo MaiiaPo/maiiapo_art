@@ -10,12 +10,12 @@
 
     <MainNav />
 
-    <div class="app-header__lang" aria-label="Язык">
+    <div class="app-header__lang" :aria-label="t('lang.aria')">
       <button
         class="app-header__lang-btn"
         type="button"
         :class="{ 'is-active': locale === 'ru' }"
-        @click="locale = 'ru'"
+        @click="setLocale('ru')"
       >
         RU
       </button>
@@ -24,7 +24,7 @@
         class="app-header__lang-btn"
         type="button"
         :class="{ 'is-active': locale === 'en' }"
-        @click="locale = 'en'"
+        @click="setLocale('en')"
       >
         EN
       </button>
@@ -33,12 +33,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import MainNav from '../navigation/MainNav.vue'
 import logo from '../../assets/artist/logo.png'
+import { useI18n } from '../../i18n'
 
-const locale = ref<'ru' | 'en'>('ru')
+const { locale, setLocale, t } = useI18n()
 </script>
 
 <style scoped>

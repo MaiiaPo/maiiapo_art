@@ -3,14 +3,14 @@
     <div class="series-list__inner">
       <header class="series-list__header">
         <div class="series-list__heading">
-          <p class="series-list__label">[ серии ]</p>
-          <h1 class="series-list__title">Серии</h1>
+          <p class="series-list__label">[ {{ t('series.labelBracket') }} ]</p>
+          <h1 class="series-list__title">{{ t('series.title') }}</h1>
         </div>
 
         <p class="series-list__slogan">
-          <span>Искусство о том,</span>
-          <span>как цифровая среда</span>
-          <span>меняет человека</span>
+          <span v-for="(line, index) in tList('series.slogan')" :key="index">
+            {{ line }}
+          </span>
         </p>
       </header>
 
@@ -24,12 +24,16 @@
             <div class="series-list__copy">
               <div class="series-list__titles">
                 <span class="series-list__index">{{ padIndex(index) }} —</span>
-                <h2 class="series-list__name-ru">{{ item.titleRu }}</h2>
-                <p class="series-list__name-en">{{ item.title }}</p>
+                <h2 class="series-list__name-ru">
+                  {{ isEn ? item.title : item.titleRu }}
+                </h2>
+                <p v-if="!isEn" class="series-list__name-en">{{ item.title }}</p>
               </div>
-              <p class="series-list__desc">{{ item.description }}</p>
+              <p class="series-list__desc">
+                {{ getSeriesDescription(item, locale) }}
+              </p>
               <span class="series-list__cta">
-                Смотреть серию
+                {{ t('series.viewSeries') }}
                 <span class="series-list__cta-arrow" aria-hidden="true">→</span>
               </span>
             </div>
@@ -53,20 +57,26 @@
             <div class="series-list__aside">
               <dl class="series-list__meta">
                 <div class="series-list__meta-row">
-                  <dt>Годы</dt>
+                  <dt>{{ t('series.years') }}</dt>
                   <dd>{{ formatSeriesYears(item) }}</dd>
                 </div>
                 <div class="series-list__meta-row">
-                  <dt>Техника</dt>
-                  <dd>{{ getSeriesMedium(item) }}</dd>
+                  <dt>{{ t('series.medium') }}</dt>
+                  <dd>{{ localizeMedium(getSeriesMedium(item), locale) }}</dd>
                 </div>
                 <div class="series-list__meta-row">
-                  <dt>Количество работ</dt>
-                  <dd>{{ formatWorksCount(item.works.length) }}</dd>
+                  <dt>{{ t('series.worksCount') }}</dt>
+                  <dd>{{ formatWorksCountLocalized(item.works.length, locale) }}</dd>
                 </div>
                 <div class="series-list__meta-row">
-                  <dt>Статус</dt>
-                  <dd>{{ seriesStatusLabel[item.status] }}</dd>
+                  <dt>{{ t('series.status') }}</dt>
+                  <dd>
+                    {{
+                      item.status === 'ready'
+                        ? t('series.statusReady')
+                        : t('series.statusInProgress')
+                    }}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -84,11 +94,17 @@ import {
   getSeriesMedium,
   seriesList,
   seriesPath,
-  seriesStatusLabel,
   type Series,
   type SeriesWork,
 } from '../data/series'
-import { formatWorksCount } from '../data/works'
+import {
+  formatWorksCountLocalized,
+  localizeMedium,
+  useI18n,
+} from '../i18n'
+import { getSeriesDescription } from '../i18n/content'
+
+const { t, tList, isEn, locale } = useI18n()
 
 function padIndex(index: number): string {
   return String(index + 1).padStart(2, '0')

@@ -8,19 +8,19 @@
       <div class="series-interior__main">
         <div class="series-interior__copy">
           <div class="series-interior__copy-top">
-            <p class="series-interior__label">[ Интерьер ]</p>
+            <p class="series-interior__label">[ {{ t('series.interiorLabel') }} ]</p>
             <h2 id="series-interior-title" class="series-interior__title">
-              Картины в интерьере
+              {{ t('series.interiorHeading') }}
             </h2>
             <p class="series-interior__text">
-              Картина меняет комнату. Комната меняет картину.
+              {{ t('series.interiorText') }}
             </p>
 
             <div v-if="visibleImages.length" class="series-interior__controls">
               <button
                 class="series-interior__arrow"
                 type="button"
-                aria-label="Предыдущее изображение"
+                :aria-label="t('series.interiorPrev')"
                 :disabled="visibleImages.length < 2"
                 @click="prev"
               >
@@ -29,7 +29,7 @@
               <button
                 class="series-interior__arrow"
                 type="button"
-                aria-label="Следующее изображение"
+                :aria-label="t('series.interiorNext')"
                 :disabled="visibleImages.length < 2"
                 @click="next"
               >
@@ -72,7 +72,7 @@
         class="series-interior__picker"
         :class="{ 'series-interior__picker--single': !showSeriesTab }"
         role="tablist"
-        aria-label="Выбор работы"
+        :aria-label="t('series.interiorPickWork')"
       >
         <button
           v-if="showSeriesTab"
@@ -83,7 +83,7 @@
           :class="{ 'is-active': selectedWorkId === null }"
           @click="selectWork(null)"
         >
-          Работы серии
+          {{ t('series.interiorSeriesWorks') }}
           <span class="series-interior__picker-rule" aria-hidden="true" />
         </button>
 
@@ -111,10 +111,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { Series } from '../../data/series'
+import { useI18n } from '../../i18n'
 
 const props = defineProps<{
   series: Series
 }>()
+
+const { t } = useI18n()
 
 const selectedWorkId = ref<string | null>(null)
 const activeIndex = ref(0)
@@ -158,11 +161,20 @@ const imageAlt = computed(() => {
   if (selectedWorkId.value) {
     const work = props.series.works.find((item) => item.id === selectedWorkId.value)
     return work
-      ? `${work.title} в интерьере, кадр ${paddedIndex.value}`
-      : `Интерьер, кадр ${paddedIndex.value}`
+      ? t('series.interiorInFrame', {
+          title: work.title,
+          index: paddedIndex.value,
+        })
+      : t('series.interiorInFrame', {
+          title: t('series.interiorLabel'),
+          index: paddedIndex.value,
+        })
   }
 
-  return `Интерьер серии, кадр ${paddedIndex.value}`
+  return t('series.interiorInFrame', {
+    title: props.series.title,
+    index: paddedIndex.value,
+  })
 })
 
 function ensureSelection() {
@@ -207,8 +219,8 @@ function next() {
 <style scoped>
 .series-interior {
   padding: 56px 40px;
-  background: #f4f2ef;
-  color: #151515;
+  background: #111;
+  color: #f5f5f5;
 }
 
 .series-interior__inner {
@@ -240,7 +252,7 @@ function next() {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #777;
+  color: #999;
 }
 
 .series-interior__title {
@@ -268,7 +280,7 @@ function next() {
   max-width: 32ch;
   font-size: 15px;
   line-height: 1.55;
-  color: #5c5a56;
+  color: #b0b0b0;
 }
 
 .series-interior__controls {
@@ -283,10 +295,10 @@ function next() {
   height: 44px;
   margin: 0;
   padding: 0;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #f5f5f5;
   border-radius: 50%;
   background: transparent;
-  color: #151515;
+  color: #f5f5f5;
   font: inherit;
   font-size: 16px;
   line-height: 1;
@@ -295,8 +307,8 @@ function next() {
 }
 
 .series-interior__arrow:hover:not(:disabled) {
-  background: #151515;
-  color: #f4f2ef;
+  background: #f5f5f5;
+  color: #111;
 }
 
 .series-interior__arrow:disabled {
@@ -313,7 +325,7 @@ function next() {
   margin: 0;
   font-size: 13px;
   letter-spacing: 0.08em;
-  color: #3a3a3a;
+  color: #c8c8c8;
 }
 
 .series-interior__bar {
@@ -321,7 +333,7 @@ function next() {
   width: 100%;
   max-width: 220px;
   height: 1px;
-  background: #c8c4be;
+  background: #3a3a3a;
 }
 
 .series-interior__bar-fill {
@@ -329,7 +341,7 @@ function next() {
   inset: 0 auto 0 0;
   height: 2px;
   margin-top: -0.5px;
-  background: #151515;
+  background: #f5f5f5;
   transition: width 0.25s ease;
 }
 
@@ -338,7 +350,7 @@ function next() {
   min-width: 0;
   height: 100%;
   overflow: hidden;
-  background: #f4f2ef;
+  background: #111;
 }
 
 .series-interior__img {
@@ -354,8 +366,8 @@ function next() {
 .series-interior__picker {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid #d6d2cb;
-  background: #f4f2ef;
+  border-top: 1px solid #2e2e2e;
+  background: #111;
 }
 
 .series-interior__picker--single {
@@ -372,7 +384,7 @@ function next() {
   margin: 0;
   padding: 22px 24px;
   border: 0;
-  border-right: 1px solid #d6d2cb;
+  border-right: 1px solid #2e2e2e;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -390,7 +402,7 @@ function next() {
 .series-interior__picker-item:hover,
 .series-interior__picker-label.is-active,
 .series-interior__picker-item.is-active {
-  background: #efece7;
+  background: #1c1c1c;
 }
 
 .series-interior__picker-label {
@@ -405,13 +417,13 @@ function next() {
   display: block;
   width: 36px;
   height: 1px;
-  background: #9a9690;
+  background: #666;
 }
 
 .series-interior__picker-index {
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: #6a6762;
+  color: #999;
 }
 
 .series-interior__picker-title {
@@ -465,7 +477,7 @@ function next() {
   .series-interior__picker-label {
     grid-column: 1 / -1;
     border-right: 0;
-    border-bottom: 1px solid #d6d2cb;
+    border-bottom: 1px solid #2e2e2e;
   }
 
   .series-interior__picker-item:nth-child(2n) {
@@ -473,7 +485,7 @@ function next() {
   }
 
   .series-interior__picker-item:nth-child(n + 3) {
-    border-top: 1px solid #d6d2cb;
+    border-top: 1px solid #2e2e2e;
   }
 }
 </style>

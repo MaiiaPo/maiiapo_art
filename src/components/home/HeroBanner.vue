@@ -1,36 +1,53 @@
 <template>
-  <section class="hero" aria-label="Баннер серии">
-    <p class="hero__label">[ {{ data.label }} ]</p>
+  <section class="hero" :aria-label="t('home.heroAria')">
+    <p class="hero__label">[ {{ t('home.heroLabel') }} ]</p>
 
     <div class="hero__visual">
       <img
         class="hero__img"
         :src="data.image"
-        :alt="data.imageAlt"
+        :alt="data.titleEn"
       />
     </div>
 
     <h1 class="hero__title">
-      <span class="hero__title-line">{{ data.titleLines[0] }}</span>
-      <span class="hero__title-line">{{ data.titleLines[1] }}</span>
+      <span
+        v-for="(line, index) in titleLines"
+        :key="index"
+        class="hero__title-line"
+      >
+        {{ line }}
+      </span>
     </h1>
-    <p class="hero__title-en">{{ data.titleEn }}</p>
-    <p class="hero__description">{{ data.description }}</p>
+    <p v-if="!isEn" class="hero__title-en">{{ data.titleEn }}</p>
+    <p class="hero__description">{{ t('home.heroDescription') }}</p>
 
     <RouterLink class="hero__cta" :to="data.ctaTo">
-      {{ data.ctaLabel }}
+      {{ t('home.heroCta') }}
       <span class="hero__cta-arrow" aria-hidden="true">→</span>
     </RouterLink>
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { HeroBannerData } from '../../data/homeHero'
+import { seriesList } from '../../data/series'
+import { useI18n } from '../../i18n'
+import { getSeriesTitleLines } from '../../i18n/content'
 
-defineProps<{
+const props = defineProps<{
   data: HeroBannerData
 }>()
+
+const { t, isEn, locale } = useI18n()
+
+const titleLines = computed(() => {
+  const series = seriesList[0]
+  if (!series) return props.data.titleLines
+  return getSeriesTitleLines(series, locale.value)
+})
 </script>
 
 <style scoped>

@@ -2,19 +2,14 @@
  * Каталог работ.
  *
  * Как добавить картинки на страницу работы:
- * 1. В папке работы: main.png + detail1.png, detail2.png...
- * 2. Импортируйте main сверху и укажите в поле image
- * 3. detail* подхватятся автоматически (см. workDetailFolderById)
+ * 1. Серия: src/assets/pages/series/{SeriesFolder}/{workFolder}/main.png + detail1.png...
+ * 2. Без серии: src/assets/pages/works/{workFolder}/main.JPG + detail1.JPG...
+ * 3. Импортируйте main сверху и укажите в поле image
+ * 4. detail* подхватятся автоматически (см. workDetailFolderById)
  */
 
-import cutToFit from '../assets/different/cutToFit/cutToFit.JPG'
-import cutToFit01 from '../assets/different/cutToFit/01.JPG'
-import cutToFit02 from '../assets/different/cutToFit/02.JPG'
-import cutToFit03 from '../assets/different/cutToFit/03.JPG'
-import holdingItIn from '../assets/different/holdingItIn/holdingItIn.JPG'
-import holdingItIn01 from '../assets/different/holdingItIn/01.JPG'
-import holdingItIn02 from '../assets/different/holdingItIn/02.JPG'
-import holdingItIn03 from '../assets/different/holdingItIn/03.JPG'
+import cutToFit from '../assets/pages/works/cutToFit/main.png'
+import holdingItIn from '../assets/pages/works/holdingItIn/main.png'
 import ready from '../assets/pages/series/savedForLater/ready/main.png'
 import almostOut from '../assets/pages/series/savedForLater/almostOut/main.png'
 import inProgress from '../assets/pages/series/savedForLater/inProgress/main.png'
@@ -23,39 +18,44 @@ import noRush from '../assets/pages/series/savedForLater/noRush/main.png'
 import stillDesired from '../assets/pages/series/theErrorOfTheBeautiful/stillDesired/main.png'
 import lovedInPieces from '../assets/pages/series/theErrorOfTheBeautiful/lovedInPieces/main.png'
 import losingMyShape from '../assets/pages/series/theErrorOfTheBeautiful/losingMyShape/main.png'
-import stackOfThoughts from '../assets/pages/series/developerState/stackOfThroughts/main.png'
+import stackOfThoughts from '../assets/pages/series/developerState/stackOfThoughts/main.png'
 import mergeConflict from '../assets/pages/series/developerState/mergeConflict/main.png'
 import developerStateWork from '../assets/pages/series/developerState/developerState/main.png'
 import { getSeriesById } from './series'
 
-/** detail1, detail2... из папок работ серий */
-const seriesDetailImages = import.meta.glob(
-  '../assets/pages/series/**/detail*.{png,PNG,jpg,JPG,jpeg,JPEG}',
+/** detail1, detail2... из папок работ (серии и standalone) */
+const workDetailImages = import.meta.glob(
+  '../assets/pages/{series,works}/**/detail*.{png,PNG,jpg,JPG,jpeg,JPEG}',
   { eager: true, import: 'default' },
 ) as Record<string, string>
 
-/** Папка работы относительно pages/series — для автоподхвата detail* */
+/**
+ * Папка работы относительно src/assets/pages —
+ * для автоподхвата detail*
+ */
 const workDetailFolderById: Record<string, string> = {
-  'still-desired': 'theErrorOfTheBeautiful/stillDesired',
-  'loved-in-pieces': 'theErrorOfTheBeautiful/lovedInPieces',
-  'losing-my-shape': 'theErrorOfTheBeautiful/losingMyShape',
-  ready: 'savedForLater/ready',
-  'almost-out': 'savedForLater/almostOut',
-  'in-progress': 'savedForLater/inProgress',
-  'settled-in': 'savedForLater/settledIn',
-  'no-rush': 'savedForLater/noRush',
-  'stack-of-thoughts': 'developerState/stackOfThroughts',
-  'merge-conflict': 'developerState/mergeConflict',
-  'developer-state': 'developerState/developerState',
+  'still-desired': 'series/theErrorOfTheBeautiful/stillDesired',
+  'loved-in-pieces': 'series/theErrorOfTheBeautiful/lovedInPieces',
+  'losing-my-shape': 'series/theErrorOfTheBeautiful/losingMyShape',
+  ready: 'series/savedForLater/ready',
+  'almost-out': 'series/savedForLater/almostOut',
+  'in-progress': 'series/savedForLater/inProgress',
+  'settled-in': 'series/savedForLater/settledIn',
+  'no-rush': 'series/savedForLater/noRush',
+  'stack-of-thoughts': 'series/developerState/stackOfThoughts',
+  'merge-conflict': 'series/developerState/mergeConflict',
+  'developer-state': 'series/developerState/developerState',
+  'cut-to-fit': 'works/cutToFit',
+  'holding-it-in': 'works/holdingItIn',
 }
 
-function getSeriesWorkDetails(workId: string): string[] {
+function getWorkDetails(workId: string): string[] {
   const folder = workDetailFolderById[workId]
   if (!folder) return []
 
-  const needle = `/pages/series/${folder}/`.toLowerCase()
+  const needle = `/pages/${folder}/`.toLowerCase()
 
-  return Object.entries(seriesDetailImages)
+  return Object.entries(workDetailImages)
     .filter(([path]) => path.replace(/\\/g, '/').toLowerCase().includes(needle))
     .sort(([a], [b]) =>
       a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
@@ -63,7 +63,7 @@ function getSeriesWorkDetails(workId: string): string[] {
     .map(([, url]) => url)
 }
 
-export type WorkStatus = 'available' | 'sold' | 'reserved'
+export type WorkStatus = 'available' | 'sold' | 'reserved' | 'in-progress'
 
 export type Work = {
   /** URL-имя работы, например still-desired → /works/still-desired */
@@ -85,10 +85,12 @@ export type Work = {
   image?: string
   /** Доп. кадры для галереи на странице работы (кроме основного image) */
   galleryImages?: string[]
-  /** Текст для блока / аккордеона «О работе» */
+  /** Текст для блока / аккордеона «Описание работы» */
   description?: string
   /** Показывать в блоке «Избранные работы» на главной */
   featured?: boolean
+  /** Показывать в каталоге /works. По умолчанию true */
+  listed?: boolean
 }
 
 export const works: Work[] = [
@@ -104,7 +106,7 @@ export const works: Work[] = [
     seriesId: 'the-error-of-being-beautiful',
     image: stillDesired,
     description:
-      'Образ, который уже нарушен, но все еще остается объектом желания.',
+      'Она уже не выглядит цельной и идеальной, но все еще остается желанной. Мне здесь важен этот странный момент: образ уже начал ломаться, а привычный взгляд все равно продолжает искать в нем красоту и привлекательность.',
     featured: false,
   },
   {
@@ -119,7 +121,7 @@ export const works: Work[] = [
     seriesId: 'the-error-of-being-beautiful',
     image: lovedInPieces,
     description:
-      'О взгляде, который любит не целого человека, а отдельные части, жесты, линии, фрагменты тела.',
+      'Иногда человека замечают не целиком, а по частям. Отдельный жест, линия тела, деталь внешности вдруг становятся важнее всего остального. Эта работа как раз про такой взгляд, который выбирает фрагменты и собирает из них свой образ.',
     featured: false,
   },
   {
@@ -134,7 +136,7 @@ export const works: Work[] = [
     seriesId: 'the-error-of-being-beautiful',
     image: losingMyShape,
     description:
-      'Момент, когда красота становится нестабильной: части тела все еще привлекательны, но между ними уже нет прежней связи. Человек остается видимым, но его цельность начинает ускользать.',
+      'Здесь фигура уже не старается оставаться правильной и собранной. Она смещается, меняется, будто выходит из формы, в которую ее пытались поместить. И в этом для меня есть не только потеря, но и ощущение свободы.',
     featured: false,
   },
   {
@@ -148,7 +150,6 @@ export const works: Work[] = [
     status: 'available',
     seriesId: null,
     image: cutToFit,
-    galleryImages: [cutToFit01, cutToFit02, cutToFit03],
     description:
       'Иногда мы так стараемся сохранить красивую форму, что не замечаем, как нас начинают подгонять под нее. Тело остается привлекательным, но внутри появляются искажения и несоответствия.',
     featured: true,
@@ -164,7 +165,6 @@ export const works: Work[] = [
     status: 'available',
     seriesId: null,
     image: holdingItIn,
-    galleryImages: [holdingItIn01, holdingItIn02, holdingItIn03],
     description:
       'Мы тратим удивительно много сил не на то, чтобы быть красивыми, а на то, чтобы сохранить красоту.',
     featured: true,
@@ -181,7 +181,7 @@ export const works: Work[] = [
     seriesId: 'postponed-for-later',
     image: ready,
     description:
-      'Момент, когда форма уже собрана и готова к показу — но внутри все еще чувствуется напряжение подгонки.',
+      '«Готова» — о моменте внутреннего сдвига, когда привычное состояние уже перестаёт устраивать, а впереди появляется ощущение движения. Решение ещё не стало действием, но сомнений становится меньше: мы собираемся сделать шаг, выйти за знакомые границы и попробовать что-то новое.',
     featured: true,
   },
   {
@@ -191,10 +191,11 @@ export const works: Work[] = [
     year: 2026,
     size: '60 × 70 см',
     medium: 'Холст, масло',
-    price: 22000,
-    status: 'available',
+    price: 0,
+    status: 'in-progress',
     seriesId: 'postponed-for-later',
     image: almostOut,
+    listed: false,
   },
   {
     id: 'in-progress',
@@ -203,10 +204,11 @@ export const works: Work[] = [
     year: 2026,
     size: '60 × 70 см',
     medium: 'Холст, масло',
-    price: 22000,
-    status: 'available',
+    price: 0,
+    status: 'in-progress',
     seriesId: 'postponed-for-later',
     image: inProgress,
+    listed: false,
   },
   {
     id: 'settled-in',
@@ -215,10 +217,11 @@ export const works: Work[] = [
     year: 2026,
     size: '60 × 70 см',
     medium: 'Холст, масло',
-    price: 22000,
-    status: 'available',
+    price: 0,
+    status: 'in-progress',
     seriesId: 'postponed-for-later',
     image: settledIn,
+    listed: false,
   },
   {
     id: 'no-rush',
@@ -227,10 +230,11 @@ export const works: Work[] = [
     year: 2026,
     size: '60 × 70 см',
     medium: 'Холст, масло',
-    price: 22000,
-    status: 'available',
+    price: 0,
+    status: 'in-progress',
     seriesId: 'postponed-for-later',
     image: noRush,
+    listed: false,
   },
   {
     id: 'stack-of-thoughts',
@@ -258,7 +262,7 @@ export const works: Work[] = [
     seriesId: 'developer-state',
     image: mergeConflict,
     description:
-      'Две версии одного человека не сходятся в одну. Конфликт слияния — когда внутренние правки противоречат друг другу, и система отказывается выбрать «правильную».',
+      'Две версии одного человека не сходятся в одну. Конфликт слияния — когда внутренние правки противоречат друг другу, и система отказывается выбрать «правильную».\n\nСъемный элемент на магнитном креплении позволяет менять композицию работы.',
   },
   {
     id: 'developer-state',
@@ -280,6 +284,15 @@ export const workStatusLabel: Record<WorkStatus, string> = {
   available: 'Доступна',
   sold: 'Продана',
   reserved: 'Зарезервирована',
+  'in-progress': 'В работе',
+}
+
+/** Показывать цену только для доступных / зарезервированных работ */
+export function shouldShowWorkPrice(work: Work): boolean {
+  return (
+    (work.status === 'available' || work.status === 'reserved') &&
+    work.price > 0
+  )
 }
 
 export function getWorkById(id: string): Work | undefined {
@@ -292,7 +305,7 @@ export function getWorksBySeriesId(seriesId: string): Work[] {
 
 /** main + detail1, detail2... (из папки работы) или явные galleryImages */
 export function getWorkGallery(work: Work): string[] {
-  const autoDetails = getSeriesWorkDetails(work.id)
+  const autoDetails = getWorkDetails(work.id)
   const extras = autoDetails.length > 0 ? autoDetails : (work.galleryImages ?? [])
   const images = [work.image, ...extras].filter(
     (src): src is string => Boolean(src),

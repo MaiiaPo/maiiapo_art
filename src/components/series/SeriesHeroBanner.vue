@@ -3,18 +3,18 @@
     <div class="series-hero__inner">
       <div class="series-hero__copy">
         <p class="series-hero__label">
-          [ {{ series.label || 'серия' }} ]
+          [ {{ t('series.label') }} ]
         </p>
         <h1 class="series-hero__title">
-          <template v-if="titleLines">
-            <span class="series-hero__title-line">{{ titleLines[0] }}</span>
-            <span class="series-hero__title-line">{{ titleLines[1] }}</span>
+          <template v-if="displayTitleLines.length >= 2">
+            <span class="series-hero__title-line">{{ displayTitleLines[0] }}</span>
+            <span class="series-hero__title-line">{{ displayTitleLines[1] }}</span>
           </template>
           <template v-else>
-            {{ series.titleRu }}
+            {{ displayTitleLines[0] ?? series.title }}
           </template>
         </h1>
-        <p class="series-hero__title-en">{{ series.title }}</p>
+        <p v-if="!isEn" class="series-hero__title-en">{{ series.title }}</p>
         <p v-if="worksMeta" class="series-hero__meta">{{ worksMeta }}</p>
       </div>
 
@@ -35,7 +35,7 @@
                 v-if="featuredWork.image"
                 class="series-hero__work-img"
                 :src="featuredWork.image"
-                :alt="featuredWork.titleRu ?? featuredWork.title"
+                :alt="workLabel(featuredWork)"
               />
               <div
                 v-else
@@ -46,10 +46,10 @@
 
             <h2 class="series-hero__work-title">
               <span class="series-hero__work-title-ru">
-                {{ featuredWork.titleRu ?? featuredWork.title }}
+                {{ workLabel(featuredWork) }}
               </span>
-              <span class="series-hero__work-title-en">
-                {{ featuredWork.title }}
+              <span v-if="workSub(featuredWork)" class="series-hero__work-title-en">
+                {{ workSub(featuredWork) }}
               </span>
             </h2>
 
@@ -70,7 +70,7 @@
                     v-if="work.image"
                     class="series-hero__work-img"
                     :src="work.image"
-                    :alt="work.titleRu ?? work.title"
+                    :alt="workLabel(work)"
                   />
                   <div
                     v-else
@@ -81,12 +81,10 @@
 
                 <h2 class="series-hero__work-title">
                   <span class="series-hero__work-title-ru">
-                    {{ work.titleRu ?? work.title }}
+                    {{ workLabel(work) }}
                   </span>
-                  <span class="series-hero__work-title-en">{{ work.title }}</span>
+                  <span v-if="workSub(work)" class="series-hero__work-title-en">{{ workSub(work) }}</span>
                 </h2>
-
-                <span class="series-hero__work-cta">Смотреть →</span>
               </RouterLink>
             </li>
           </ul>
@@ -103,7 +101,7 @@
                     v-if="work.image"
                     class="series-hero__work-img"
                     :src="work.image"
-                    :alt="work.titleRu ?? work.title"
+                    :alt="workLabel(work)"
                   />
                   <div
                     v-else
@@ -114,12 +112,10 @@
 
                 <h2 class="series-hero__work-title">
                   <span class="series-hero__work-title-ru">
-                    {{ work.titleRu ?? work.title }}
+                    {{ workLabel(work) }}
                   </span>
-                  <span class="series-hero__work-title-en">{{ work.title }}</span>
+                  <span v-if="workSub(work)" class="series-hero__work-title-en">{{ workSub(work) }}</span>
                 </h2>
-
-                <span class="series-hero__work-cta">Смотреть →</span>
               </RouterLink>
             </li>
           </ul>
@@ -138,7 +134,7 @@
                 v-if="work.image"
                 class="series-hero__work-img"
                 :src="work.image"
-                :alt="work.titleRu ?? work.title"
+                :alt="workLabel(work)"
               />
               <div
                 v-else
@@ -149,9 +145,9 @@
 
             <h2 class="series-hero__work-title">
               <span class="series-hero__work-title-ru">
-                {{ work.titleRu ?? work.title }}
+                {{ workLabel(work) }}
               </span>
-              <span class="series-hero__work-title-en">{{ work.title }}</span>
+              <span v-if="workSub(work)" class="series-hero__work-title-en">{{ workSub(work) }}</span>
             </h2>
 
             <span class="series-hero__work-cta">Смотреть →</span>
@@ -167,13 +163,22 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { Series } from '../../data/series'
 import { formatSeriesYears } from '../../data/series'
-import { formatWorksCount, workPath } from '../../data/works'
+import { workPath } from '../../data/works'
+import {
+  formatWorksCountLocalized,
+  useI18n,
+} from '../../i18n'
+import { getSeriesTitleLines } from '../../i18n/content'
 
 const props = defineProps<{
   series: Series
 }>()
 
-const titleLines = computed(() => props.series.titleRuLines)
+const { t, isEn, locale } = useI18n()
+
+const displayTitleLines = computed(() =>
+  getSeriesTitleLines(props.series, locale.value),
+)
 
 const isFeaturedLayout = computed(
   () => props.series.id === 'postponed-for-later' && props.series.works.length > 3,
@@ -188,10 +193,18 @@ const worksMeta = computed(() => {
   if (!count) return ''
 
   const years = formatSeriesYears(props.series)
-  return years === '—'
-    ? formatWorksCount(count)
-    : `${formatWorksCount(count)}  /  ${years}`
+  const countLabel = formatWorksCountLocalized(count, locale.value)
+  return years === '—' ? countLabel : `${countLabel}  /  ${years}`
 })
+
+function workLabel(work: { title: string; titleRu?: string }) {
+  return locale.value === 'en' ? work.title : (work.titleRu ?? work.title)
+}
+
+function workSub(work: { title: string; titleRu?: string }) {
+  if (locale.value === 'en') return ''
+  return work.titleRu && work.titleRu !== work.title ? work.title : ''
+}
 </script>
 
 <style scoped>

@@ -2,10 +2,10 @@
   <section class="featured" aria-labelledby="featured-title">
     <div class="featured__inner">
       <div class="featured__intro">
-        <p class="featured__label">[ каталог работ ]</p>
-        <h2 id="featured-title" class="featured__title">Каталог работ</h2>
+        <p class="featured__label">[ {{ t('home.featuredLabel') }} ]</p>
+        <h2 id="featured-title" class="featured__title">{{ t('home.featuredTitle') }}</h2>
         <RouterLink class="featured__all" to="/works">
-          Смотреть все работы
+          {{ t('home.featuredAll') }}
           <span class="featured__arrow" aria-hidden="true">→</span>
         </RouterLink>
       </div>
@@ -18,36 +18,49 @@
                 v-if="work.image"
                 class="work-card__img"
                 :src="work.image"
-                :alt="`${work.titleRu} / ${work.titleEn}`"
+                :alt="isEn ? work.titleEn : `${work.titleRu} / ${work.titleEn}`"
               />
               <div v-else class="work-card__placeholder" aria-hidden="true" />
             </RouterLink>
 
             <div class="work-card__body">
               <h3 class="work-card__title">
-                <span class="work-card__title-ru">{{ work.titleRu }}</span>
-                <span class="work-card__title-en">{{ work.titleEn }}</span>
+                <span class="work-card__title-ru">
+                  {{ isEn ? work.titleEn : work.titleRu }}
+                </span>
+                <span v-if="!isEn" class="work-card__title-en">{{ work.titleEn }}</span>
               </h3>
 
               <div class="work-card__series-slot">
                 <p
-                  v-if="work.seriesTitleRu && work.seriesTo"
+                  v-if="work.seriesTo && (work.seriesTitleRu || work.seriesTitleEn)"
                   class="work-card__series"
                 >
-                  <span class="work-card__series-label">Серия:</span>
+                  <span class="work-card__series-label">{{ t('home.seriesLabel') }}</span>
                   <RouterLink class="work-card__series-link" :to="work.seriesTo">
-                    {{ work.seriesTitleRu }}
+                    {{ isEn ? work.seriesTitleEn : work.seriesTitleRu }}
                   </RouterLink>
                 </p>
               </div>
 
               <div class="work-card__specs">
-                <span class="work-card__size">{{ work.size }}</span>
-                <span class="work-card__price">{{ work.price }}</span>
+                <div class="work-card__specs-left">
+                  <span class="work-card__year">{{ work.year }}</span>
+                  <span class="work-card__size">{{ localizeSize(work.size, locale) }}</span>
+                </div>
+                <div class="work-card__specs-right">
+                  <span
+                    class="work-card__status"
+                    :class="`work-card__status--${work.status}`"
+                  >
+                    {{ t(`status.${work.status}`) }}
+                  </span>
+                  <span class="work-card__price">{{ work.price }}</span>
+                </div>
               </div>
 
               <RouterLink class="work-card__more" :to="work.to">
-                Подробнее
+                {{ t('home.featuredMore') }}
                 <span class="featured__arrow" aria-hidden="true">→</span>
               </RouterLink>
             </div>
@@ -61,10 +74,13 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import type { FeaturedWork } from '../../data/featuredWorks'
+import { localizeSize, useI18n } from '../../i18n'
 
 defineProps<{
   works: FeaturedWork[]
 }>()
+
+const { t, isEn, locale } = useI18n()
 </script>
 
 <style scoped>
@@ -241,9 +257,41 @@ defineProps<{
   border-bottom: 1px solid #ddd;
 }
 
+.work-card__specs-left,
+.work-card__specs-right {
+  display: grid;
+  gap: 4px;
+}
+
+.work-card__specs-right {
+  justify-items: end;
+  text-align: right;
+}
+
+.work-card__year,
 .work-card__size {
   font-size: 14px;
   color: #777;
+}
+
+.work-card__status {
+  font-size: 14px;
+}
+
+.work-card__status--available {
+  color: #d51d78;
+}
+
+.work-card__status--sold {
+  color: #888;
+}
+
+.work-card__status--reserved {
+  color: #b45f00;
+}
+
+.work-card__status--in-progress {
+  color: #888;
 }
 
 .work-card__price {

@@ -2,18 +2,21 @@ import catalogCutToFit from '../assets/pages/home/catalog_cutToFit.png'
 import catalogHoldingItIn from '../assets/pages/home/catalog_holdingItIn.png'
 import catalogReady from '../assets/pages/home/catalog_ready.png'
 import { getSeriesById, seriesPath } from './series'
-import { works, formatPrice, workPath } from './works'
+import { works, formatPrice, workPath, type Work } from './works'
 
 export type FeaturedWork = {
   id: string
   index: string
   titleRu: string
   titleEn: string
+  year: number
   size: string
   price: string
+  status: Work['status']
   image?: string
   to: string
   seriesTitleRu?: string
+  seriesTitleEn?: string
   seriesTo?: string
 }
 
@@ -48,13 +51,16 @@ export const featuredWorks: FeaturedWork[] = featuredOrder
       index: work.index,
       titleRu: catalogTitlesRu[work.id] ?? work.title,
       titleEn: work.title,
+      year: work.year,
       size: work.size,
       price: formatPrice(work.price),
+      status: work.status,
       image: catalogImages[work.id] ?? work.image,
       to: workPath(work.id),
       seriesTitleRu: series
         ? (seriesTitlesRu[series.id] ?? series.title)
         : undefined,
+      seriesTitleEn: series?.title,
       seriesTo: series ? seriesPath(series.id) : undefined,
     }
   })
