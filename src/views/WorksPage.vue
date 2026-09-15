@@ -248,6 +248,21 @@ const visibleWorks = computed(() => {
 @media (max-width: 560px) {
   .works-page__grid {
     grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .works-page__grid > li {
+    padding: 36px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .works-page__grid > li:first-child {
+    padding-top: 8px;
+  }
+
+  .works-page__grid > li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
   }
 }
 </style>

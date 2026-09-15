@@ -356,7 +356,13 @@ function previewWorks(series: Series): (SeriesWork | undefined)[] {
 
   .series-list__thumbs {
     grid-column: 1 / -1;
-    min-height: 240px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .series-list__thumb-wrap {
+    aspect-ratio: 3 / 4;
+    padding: 8px;
   }
 
   .series-list__aside {
@@ -392,7 +398,14 @@ function previewWorks(series: Series): (SeriesWork | undefined)[] {
   }
 
   .series-list__thumbs {
-    max-width: 320px;
+    max-width: none;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .series-list__thumb-wrap {
+    padding: 4px;
+    aspect-ratio: 2 / 3;
   }
 
   .series-list__aside {
