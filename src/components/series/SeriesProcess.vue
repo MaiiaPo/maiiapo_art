@@ -40,10 +40,12 @@
             :key="`${pageIndex}-${index}`"
             class="series-process__frame"
           >
-            <img
+            <LazyImage
               class="series-process__img"
+              fill
               :src="image"
               :alt="`Процесс серии, кадр ${pageIndex * pageSize + index + 1}`"
+              object-fit="cover"
             />
           </figure>
         </div>
@@ -80,6 +82,7 @@
 import { computed, ref } from 'vue'
 import type { SeriesProcess } from '../../data/seriesProcess'
 import { useI18n } from '../../i18n'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   process: SeriesProcess
@@ -294,11 +297,8 @@ function next() {
 }
 
 .series-process__img {
-  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
 }
 
 .series-process__nav {

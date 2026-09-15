@@ -2,11 +2,13 @@
   <article class="work-card">
     <div class="work-card__inner">
       <RouterLink class="work-card__media" :to="workPath(work.id)">
-        <img
+        <LazyImage
           v-if="work.image"
           class="work-card__img"
           :src="work.image"
           :alt="displayTitle"
+          object-fit="contain"
+          object-position="bottom center"
         />
         <div v-else class="work-card__placeholder" aria-hidden="true" />
       </RouterLink>
@@ -74,6 +76,7 @@ import {
   getWorkDisplayTitle,
   getWorkSubtitle,
 } from '../../i18n/content'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   work: Work
@@ -117,12 +120,16 @@ const seriesTo = computed(() =>
 }
 
 .work-card__img {
-  display: block;
   height: 320px;
   width: auto;
   max-width: 100%;
-  object-fit: contain;
-  object-position: bottom center;
+}
+
+.work-card__img :deep(.lazy-image__media) {
+  width: auto;
+  max-width: 100%;
+  height: 320px;
+  margin-inline: auto;
 }
 
 .work-card__placeholder {

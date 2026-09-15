@@ -32,7 +32,14 @@
         :style="stageStyle"
         @click="lightboxOpen = true"
       >
-        <img :src="current" :alt="alt" />
+        <LazyImage
+          class="work-gallery__main-img"
+          fill
+          eager
+          :src="current"
+          :alt="alt"
+          object-fit="contain"
+        />
       </button>
       <div
         v-else
@@ -76,7 +83,13 @@
           :aria-label="`Показать кадр ${String(index + 1).padStart(2, '0')}`"
           @click="activeIndex = index"
         >
-          <img :src="image" alt="" />
+          <LazyImage
+            class="work-gallery__thumb-img"
+            fill
+            :src="image"
+            alt=""
+            object-fit="cover"
+          />
         </button>
       </li>
     </ul>
@@ -98,7 +111,13 @@
         >
           ×
         </button>
-        <img class="work-lightbox__img" :src="current" :alt="alt" />
+        <LazyImage
+          class="work-lightbox__img"
+          eager
+          :src="current"
+          :alt="alt"
+          object-fit="contain"
+        />
       </div>
     </Teleport>
   </div>
@@ -106,6 +125,7 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   images: string[]
@@ -251,12 +271,10 @@ function next() {
   cursor: default;
 }
 
-.work-gallery__main img {
-  display: block;
+.work-gallery__main-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  min-height: 280px;
 }
 
 .work-gallery__placeholder {
@@ -287,11 +305,9 @@ function next() {
   cursor: pointer;
 }
 
-.work-gallery__thumb img {
-  display: block;
+.work-gallery__thumb-img {
   width: 100%;
   aspect-ratio: 1;
-  object-fit: cover;
 }
 
 .work-gallery__thumb--active {
@@ -309,12 +325,16 @@ function next() {
 }
 
 .work-lightbox__img {
-  display: block;
+  max-width: min(96vw, 1400px);
+  max-height: 92vh;
+  background: transparent;
+}
+
+.work-lightbox__img :deep(.lazy-image__media) {
   max-width: min(96vw, 1400px);
   max-height: 92vh;
   width: auto;
   height: auto;
-  object-fit: contain;
 }
 
 .work-lightbox__close {

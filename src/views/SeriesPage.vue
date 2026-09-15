@@ -44,11 +44,13 @@
                 :key="`${item.id}-${thumbIndex}`"
                 class="series-list__thumb-wrap"
               >
-                <img
+                <LazyImage
                   v-if="work?.image"
                   class="series-list__thumb"
+                  fill
                   :src="work.image"
                   :alt="work.title"
+                  object-fit="contain"
                 />
                 <div v-else class="series-list__thumb series-list__thumb--empty" />
               </li>
@@ -97,6 +99,7 @@ import {
   type Series,
   type SeriesWork,
 } from '../data/series'
+import LazyImage from '../components/ui/LazyImage.vue'
 import {
   formatWorksCountLocalized,
   localizeMedium,
@@ -302,11 +305,8 @@ function previewWorks(series: Series): (SeriesWork | undefined)[] {
 }
 
 .series-list__thumb {
-  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
 }
 
 .series-list__thumb--empty {

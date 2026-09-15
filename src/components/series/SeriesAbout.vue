@@ -2,10 +2,12 @@
   <section class="series-about" aria-labelledby="series-about-title">
     <div class="series-about__inner">
       <div class="series-about__visual">
-        <img
+        <LazyImage
           class="series-about__img"
+          fill
           :src="about.image"
           :alt="about.imageAlt"
+          object-fit="cover"
         />
       </div>
 
@@ -47,6 +49,7 @@
 
 <script setup lang="ts">
 import type { SeriesAbout } from '../../data/seriesAbout'
+import LazyImage from '../ui/LazyImage.vue'
 
 defineProps<{
   about: SeriesAbout
@@ -70,15 +73,13 @@ defineProps<{
 
 .series-about__visual {
   min-width: 0;
+  min-height: 280px;
 }
 
 .series-about__img {
-  display: block;
   width: 100%;
   height: 100%;
   max-height: 520px;
-  object-fit: cover;
-  object-position: center;
 }
 
 .series-about__content {

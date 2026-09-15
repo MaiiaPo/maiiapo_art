@@ -14,11 +14,13 @@
         <li v-for="work in works" :key="work.id" class="featured__item">
           <article class="work-card">
             <RouterLink class="work-card__media" :to="work.to">
-              <img
+              <LazyImage
                 v-if="work.image"
                 class="work-card__img"
                 :src="work.image"
                 :alt="isEn ? work.titleEn : `${work.titleRu} / ${work.titleEn}`"
+                object-fit="contain"
+                object-position="bottom center"
               />
               <div v-else class="work-card__placeholder" aria-hidden="true" />
             </RouterLink>
@@ -75,6 +77,7 @@
 import { RouterLink } from 'vue-router'
 import type { FeaturedWork } from '../../data/featuredWorks'
 import { localizeSize, useI18n } from '../../i18n'
+import LazyImage from '../ui/LazyImage.vue'
 
 defineProps<{
   works: FeaturedWork[]
@@ -173,9 +176,11 @@ const { t, isEn, locale } = useI18n()
   max-width: 100%;
 }
 
-.work-card__img {
-  object-fit: contain;
-  object-position: bottom center;
+.work-card__img :deep(.lazy-image__media) {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  margin-inline: auto;
 }
 
 .work-card__placeholder {

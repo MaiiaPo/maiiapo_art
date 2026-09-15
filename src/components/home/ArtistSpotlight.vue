@@ -2,10 +2,13 @@
   <section class="spotlight" :aria-label="t('home.spotlightLabel')">
     <div class="spotlight__inner">
       <div class="spotlight__visual">
-        <img
+        <LazyImage
           class="spotlight__img"
+          fill
           :src="spotlight.image"
           :alt="spotlight.imageAlt"
+          object-fit="cover"
+          object-position="center 20%"
         />
       </div>
 
@@ -26,6 +29,7 @@
 import { RouterLink } from 'vue-router'
 import type { ArtistSpotlight } from '../../data/artistSpotlight'
 import { useI18n } from '../../i18n'
+import LazyImage from '../ui/LazyImage.vue'
 
 defineProps<{
   spotlight: ArtistSpotlight
@@ -60,11 +64,8 @@ const { t } = useI18n()
 }
 
 .spotlight__img {
-  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
 }
 
 .spotlight__copy {

@@ -71,10 +71,14 @@
     </div>
 
     <div class="about__portrait">
-      <img
+      <LazyImage
         class="about__portrait-img"
+        fill
+        eager
         :src="aboutArtist.portrait"
         :alt="aboutArtist.portraitAlt"
+        object-fit="cover"
+        object-position="center top"
       />
     </div>
 
@@ -103,6 +107,7 @@ import { computed, ref } from 'vue'
 import { aboutArtist } from '../data/aboutArtist'
 import { sendSiteContact } from '../services/sendSiteContact'
 import { useI18n } from '../i18n'
+import LazyImage from '../components/ui/LazyImage.vue'
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error'
 
@@ -333,12 +338,15 @@ async function onSubmit() {
 }
 
 .about__portrait-img {
-  display: block;
   width: 100%;
   height: auto;
   max-height: min(72vh, 680px);
-  object-fit: cover;
-  object-position: center top;
+}
+
+.about__portrait-img :deep(.lazy-image__media) {
+  width: 100%;
+  height: auto;
+  max-height: min(72vh, 680px);
 }
 
 .about__aside {

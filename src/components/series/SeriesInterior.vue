@@ -58,11 +58,13 @@
         </div>
 
         <div class="series-interior__stage">
-          <img
+          <LazyImage
             v-if="current"
             class="series-interior__img"
+            fill
             :src="current"
             :alt="imageAlt"
+            object-fit="contain"
           />
         </div>
       </div>
@@ -112,6 +114,7 @@
 import { computed, ref, watch } from 'vue'
 import type { Series } from '../../data/series'
 import { useI18n } from '../../i18n'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   series: Series
@@ -356,11 +359,8 @@ function next() {
 .series-interior__img {
   position: absolute;
   inset: 0;
-  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
 }
 
 .series-interior__picker {

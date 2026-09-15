@@ -22,11 +22,13 @@
       <li v-for="item in others" :key="item.id">
         <article class="work-series-others__card">
           <RouterLink class="work-series-others__media" :to="workPath(item.id)">
-            <img
+            <LazyImage
               v-if="item.image"
               class="work-series-others__img"
+              fill
               :src="item.image"
               :alt="item.displayTitle"
+              object-fit="contain"
             />
             <div v-else class="work-series-others__placeholder" />
           </RouterLink>
@@ -92,6 +94,7 @@ import {
 } from '../../data/works'
 import { localizeSize, useI18n } from '../../i18n'
 import { getWorkDisplayTitle, getWorkSubtitle } from '../../i18n/content'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   seriesId: string
@@ -189,13 +192,15 @@ const others = computed(() =>
 }
 
 .work-series-others__img {
-  display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 2;
-  object-fit: contain;
-  object-position: center;
-  background: #ececec;
+}
+
+.work-series-others__img :deep(.lazy-image__media) {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 2;
 }
 
 .work-series-others__placeholder {

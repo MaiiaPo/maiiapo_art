@@ -3,10 +3,14 @@
     <div class="about-page__inner">
       <div class="about-page__visual">
         <div class="about-page__photo">
-          <img
+          <LazyImage
             class="about-page__img"
+            fill
+            eager
             :src="aboutPage.portrait"
             :alt="aboutPage.portraitAlt"
+            object-fit="cover"
+            object-position="center top"
           />
         </div>
 
@@ -63,6 +67,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import ManifestDialog from '../components/about/ManifestDialog.vue'
+import LazyImage from '../components/ui/LazyImage.vue'
 import { aboutPage } from '../data/aboutPage'
 import { useI18n } from '../i18n'
 
@@ -123,11 +128,8 @@ function openManifest() {
 }
 
 .about-page__img {
-  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center top;
 }
 
 .about-page__quote {

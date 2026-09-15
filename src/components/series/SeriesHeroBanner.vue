@@ -31,11 +31,14 @@
             :to="workPath(featuredWork.id)"
           >
             <div class="series-hero__work-media">
-              <img
+              <LazyImage
                 v-if="featuredWork.image"
                 class="series-hero__work-img"
+                fill
+                eager
                 :src="featuredWork.image"
                 :alt="workLabel(featuredWork)"
+                object-fit="contain"
               />
               <div
                 v-else
@@ -66,11 +69,13 @@
             >
               <RouterLink class="series-hero__work-link" :to="workPath(work.id)">
                 <div class="series-hero__work-media">
-                  <img
+                  <LazyImage
                     v-if="work.image"
                     class="series-hero__work-img"
+                    fill
                     :src="work.image"
                     :alt="workLabel(work)"
+                    object-fit="contain"
                   />
                   <div
                     v-else
@@ -97,11 +102,13 @@
             >
               <RouterLink class="series-hero__work-link" :to="workPath(work.id)">
                 <div class="series-hero__work-media">
-                  <img
+                  <LazyImage
                     v-if="work.image"
                     class="series-hero__work-img"
+                    fill
                     :src="work.image"
                     :alt="workLabel(work)"
+                    object-fit="contain"
                   />
                   <div
                     v-else
@@ -130,11 +137,13 @@
         >
           <RouterLink class="series-hero__work-link" :to="workPath(work.id)">
             <div class="series-hero__work-media">
-              <img
+              <LazyImage
                 v-if="work.image"
                 class="series-hero__work-img"
+                fill
                 :src="work.image"
                 :alt="workLabel(work)"
+                object-fit="contain"
               />
               <div
                 v-else
@@ -169,6 +178,7 @@ import {
   useI18n,
 } from '../../i18n'
 import { getSeriesTitleLines } from '../../i18n/content'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   series: Series
@@ -310,8 +320,6 @@ function workSub(work: { title: string; titleRu?: string }) {
 .series-hero__works .series-hero__work-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
 }
 
 .series-hero__works .series-hero__work-placeholder {
@@ -388,21 +396,17 @@ function workSub(work: { title: string; titleRu?: string }) {
 }
 
 .series-hero__work-img {
-  display: block;
   width: 100%;
   height: auto;
-  object-fit: contain;
 }
 
 .series-hero__work--featured .series-hero__work-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .series-hero__side .series-hero__work-img {
   aspect-ratio: 1 / 1;
-  background: #e8e8e8;
 }
 
 .series-hero__work-placeholder {

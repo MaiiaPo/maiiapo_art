@@ -3,10 +3,12 @@
     <p class="hero__label">[ {{ t('home.heroLabel') }} ]</p>
 
     <div class="hero__visual">
-      <img
+      <LazyImage
         class="hero__img"
         :src="data.image"
         :alt="data.titleEn"
+        eager
+        object-fit="contain"
       />
     </div>
 
@@ -36,6 +38,7 @@ import type { HeroBannerData } from '../../data/homeHero'
 import { seriesList } from '../../data/series'
 import { useI18n } from '../../i18n'
 import { getSeriesTitleLines } from '../../i18n/content'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   data: HeroBannerData
@@ -83,7 +86,6 @@ const titleLines = computed(() => {
 }
 
 .hero__img {
-  display: block;
   width: 100%;
   height: auto;
 }

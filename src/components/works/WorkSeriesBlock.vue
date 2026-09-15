@@ -1,11 +1,13 @@
 <template>
   <section class="work-series-block" aria-labelledby="work-series-title">
     <div class="work-series-block__media">
-      <img
+      <LazyImage
         v-if="cover"
         class="work-series-block__cover"
+        fill
         :src="cover"
         :alt="series.title"
+        object-fit="cover"
       />
       <div v-else class="work-series-block__cover work-series-block__cover--empty" />
     </div>
@@ -27,7 +29,13 @@
 
       <ul v-if="previews.length" class="work-series-block__avatars" aria-hidden="true">
         <li v-for="item in previews" :key="item.id">
-          <img v-if="item.image" :src="item.image" :alt="item.title" />
+          <LazyImage
+            v-if="item.image"
+            fill
+            :src="item.image"
+            :alt="item.title"
+            object-fit="cover"
+          />
           <span v-else />
         </li>
       </ul>
@@ -44,6 +52,7 @@ import {
   getWorksBySeriesId,
   type Work,
 } from '../../data/works'
+import LazyImage from '../ui/LazyImage.vue'
 
 const props = defineProps<{
   series: Series
@@ -85,11 +94,8 @@ const previews = computed<Work[]>(() =>
 }
 
 .work-series-block__cover {
-  display: block;
   width: 120px;
   aspect-ratio: 1 / 1.35;
-  object-fit: cover;
-  background: #e0e0e0;
 }
 
 .work-series-block__cover--empty {
@@ -164,12 +170,11 @@ const previews = computed<Work[]>(() =>
   margin-left: -10px;
 }
 
-.work-series-block__avatars img,
+.work-series-block__avatars :deep(.lazy-image),
 .work-series-block__avatars span {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 @media (max-width: 800px) {
