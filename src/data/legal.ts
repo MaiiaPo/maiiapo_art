@@ -14,33 +14,8 @@ export const legalOperator = {
   status: 'самозанятый',
   inn: '590585051346',
   siteUrl: 'https://maiiapo.com',
-  email: 'maiiapo.com@gmail.com',
+  email: 'maiiapoart@gmail.com',
   revisedAt: '15.09.2026',
-}
-
-/** Подставляет URL сайта в готовый документ (для РФ / .art → maiiapo.art). */
-export function withLegalSiteUrl(
-  document: LegalDocument,
-  siteUrl: string,
-): LegalDocument {
-  const from = legalOperator.siteUrl
-  if (!siteUrl || siteUrl === from) return document
-
-  return {
-    ...document,
-    blocks: document.blocks.map((block) => {
-      if (block.type === 'p') {
-        return { ...block, text: block.text.split(from).join(siteUrl) }
-      }
-      if (block.type === 'list') {
-        return {
-          ...block,
-          items: block.items.map((item) => item.split(from).join(siteUrl)),
-        }
-      }
-      return block
-    }),
-  }
 }
 
 export const privacyPolicy: LegalDocument = {

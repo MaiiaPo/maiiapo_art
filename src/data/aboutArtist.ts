@@ -14,8 +14,8 @@ export const aboutArtist = {
   contacts: [
     {
       label: 'E-mail',
-      value: 'maiiapo.com@gmail.com',
-      href: 'mailto:maiiapo.com@gmail.com',
+      value: 'maiiapoart@gmail.com',
+      href: 'mailto:maiiapoart@gmail.com',
     },
     {
       label: 'Telegram',

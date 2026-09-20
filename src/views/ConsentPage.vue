@@ -1,24 +1,11 @@
 <template>
   <LegalDocumentView
-    :document="legalDocument"
+    :document="personalDataConsent"
     title-id="consent-page-title"
   />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import LegalDocumentView from '../components/legal/LegalDocumentView.vue'
-import { personalDataConsent, withLegalSiteUrl } from '../data/legal'
-import { resolvePublicSiteUrl, siteUrlFromHostname } from '../services/geo'
-
-const legalDocument = ref(
-  withLegalSiteUrl(personalDataConsent, siteUrlFromHostname()),
-)
-
-onMounted(async () => {
-  legalDocument.value = withLegalSiteUrl(
-    personalDataConsent,
-    await resolvePublicSiteUrl(),
-  )
-})
+import { personalDataConsent } from '../data/legal'
 </script>

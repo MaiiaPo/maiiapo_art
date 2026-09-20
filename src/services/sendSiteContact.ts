@@ -1,4 +1,4 @@
-const CONTACT_EMAIL = 'maiiapo.com@gmail.com'
+const CONTACT_EMAIL = 'maiiapoart@gmail.com'
 const CONTACT_SUBJECT = 'Вам отправлен контакт для связи с сайта maiiapo.com'
 const ORDER_SUBJECT = 'Заказ работы с сайта maiiapo.com'
 
