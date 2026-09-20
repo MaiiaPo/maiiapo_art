@@ -75,11 +75,7 @@ const seriesAboutEn: Record<string, Omit<SeriesAbout, 'image'>> = {
       'Not every idea wants to become a series. Sometimes an image appears very clearly and exists on its own.',
       'I simply want to capture it, without inventing a continuation. Here are such single works, each with its own story, state, and tone.',
     ],
-    quoteLines: [
-      'Not every idea',
-      'wants to become',
-      'a series.',
-    ],
+    quoteLines: ['Sometimes one work', 'is enough'],
   },
 }
 
