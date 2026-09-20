@@ -23,6 +23,7 @@ import AppFooter from './components/layout/AppFooter.vue'
 
 * {
   box-sizing: border-box;
+  
 }
 
 body {
