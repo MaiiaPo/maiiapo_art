@@ -72,92 +72,16 @@ export default defineConfig({
       defaultDirectives: imageDirectives,
       removeMetadata: true,
     }),
-    {
-      name: 'local-contact-api',
-      configureServer(server) {
-        server.middlewares.use('/api/contact', (req, res, next) => {
-          if (req.method === 'OPTIONS') {
-            res.statusCode = 204
-            res.end()
-            return
-          }
-          if (req.method !== 'POST') {
-            next()
-            return
-          }
-
-          const chunks: Buffer[] = []
-          req.on('data', (chunk) => chunks.push(chunk))
-          req.on('end', async () => {
-            try {
-              const body = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}') as {
-                contact?: string
-                workTitle?: string
-                workId?: string
-              }
-              const contact = String(body.contact ?? '').trim()
-              if (!contact) {
-                res.statusCode = 400
-                res.setHeader('Content-Type', 'application/json')
-                res.end(JSON.stringify({ success: false }))
-                return
-              }
-
-              const isOrder = Boolean(body.workTitle || body.workId)
-              const lines = [
-                isOrder ? 'Запрос на заказ работы' : 'Контакт с сайта',
-                '',
-                body.workTitle ? `Работа: ${body.workTitle}` : null,
-                body.workId ? `ID: ${body.workId}` : null,
-                `Контакт: ${contact}`,
-              ].filter(Boolean)
-
-              const emailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)
-              const upstream = await fetch(
-                'https://formsubmit.co/ajax/maiiapoart%40gmail.com',
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                  },
-                  body: JSON.stringify({
-                    name: 'maiiapo.site',
-                    email: emailLike ? contact : 'noreply@maiiapo.com',
-                    _replyto: emailLike ? contact : undefined,
-                    _subject: isOrder
-                      ? 'Заказ работы с сайта maiiapo'
-                      : 'Вам отправлен контакт для связи с сайта maiiapo',
-                    _captcha: 'false',
-                    _template: 'box',
-                    message: lines.join('\n'),
-                  }),
-                },
-              )
-
-              const raw = await upstream.text()
-              let ok = upstream.ok
-              try {
-                const parsed = JSON.parse(raw) as { success?: unknown }
-                ok = ok && Boolean(parsed.success)
-              } catch {
-                ok = false
-              }
-
-              res.statusCode = ok ? 200 : 502
-              res.setHeader('Content-Type', 'application/json')
-              res.end(JSON.stringify({ success: ok }))
-            } catch {
-              res.statusCode = 500
-              res.setHeader('Content-Type', 'application/json')
-              res.end(JSON.stringify({ success: false }))
-            }
-          })
-        })
-      },
-    },
   ],
   server: {
+    proxy: {
+      // Локально заявки уходят на прод-API Vercel
+      '/api/contact': {
+        target: 'https://www.maiiapo.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
     watch: {
       // Windows: files being copied into assets can lock and crash native FS watchers
       usePolling: true,

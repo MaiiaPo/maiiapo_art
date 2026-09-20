@@ -5,19 +5,21 @@ export type SiteContactPayload = {
 }
 
 /**
- * Отправка заявок через свой /api/contact (Vercel).
- * Браузер в РФ не ходит на formsubmit.co напрямую — его часто режут.
- * С .art тоже бьём в API на .com (CORS разрешён).
+ * Заявки всегда уходят на API Vercel (www.maiiapo.com).
+ * На maiiapo.art своего backend нет — только статика на reg.ru.
  */
 function getContactEndpoint(): string {
-  if (typeof window === 'undefined') return '/api/contact'
-
-  const host = window.location.hostname.toLowerCase()
-  if (host === 'maiiapo.art' || host === 'www.maiiapo.art') {
+  if (typeof window === 'undefined') {
     return 'https://www.maiiapo.com/api/contact'
   }
 
-  return '/api/contact'
+  const host = window.location.hostname.toLowerCase()
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return '/api/contact'
+  }
+
+  // И .com, и .art бьют в один рабочий endpoint на Vercel
+  return 'https://www.maiiapo.com/api/contact'
 }
 
 export async function sendSiteContact(
@@ -46,13 +48,14 @@ export async function sendSiteContact(
     }),
   })
 
-  if (!response.ok) {
+  let result: { success?: string | boolean } = {}
+  try {
+    result = (await response.json()) as { success?: string | boolean }
+  } catch {
     throw new Error('Не удалось отправить сообщение')
   }
 
-  const result = (await response.json()) as { success?: string | boolean }
-
-  if (!result.success) {
+  if (!response.ok || !result.success) {
     throw new Error('Не удалось отправить сообщение')
   }
 }
