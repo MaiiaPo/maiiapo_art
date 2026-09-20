@@ -4,7 +4,7 @@
       <div class="featured__intro">
         <p class="featured__label">[ {{ t('home.featuredLabel') }} ]</p>
         <h2 id="featured-title" class="featured__title">{{ t('home.featuredTitle') }}</h2>
-        <RouterLink class="featured__all" to="/works">
+        <RouterLink class="featured__all" to="/series">
           {{ t('home.featuredAll') }}
           <span class="featured__arrow" aria-hidden="true">→</span>
         </RouterLink>
@@ -20,7 +20,7 @@
                 :src="work.image"
                 :alt="isEn ? work.titleEn : `${work.titleRu} / ${work.titleEn}`"
                 object-fit="contain"
-                object-position="bottom center"
+                object-position="center"
               />
               <div v-else class="work-card__placeholder" aria-hidden="true" />
             </RouterLink>
@@ -159,7 +159,7 @@ const { t, isEn, locale } = useI18n()
 
 .work-card__media {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   width: 100%;
   height: clamp(240px, 26vw, 300px);

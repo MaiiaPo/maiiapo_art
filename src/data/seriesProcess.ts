@@ -35,6 +35,17 @@ const developerStateDraftImages = Object.entries(
   )
   .map(([, url]) => url)
 
+const outsideTheSeriesDraftImages = Object.entries(
+  import.meta.glob(
+    '../assets/pages/series/outsideTheSeries/draft/*.{jpg,JPG,jpeg,JPEG,png,PNG}',
+    { eager: true, import: 'default' },
+  ) as Record<string, string>,
+)
+  .sort(([a], [b]) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+  )
+  .map(([, url]) => url)
+
 export const seriesProcessById: Record<string, SeriesProcess> = {
   'the-error-of-being-beautiful': {
     label: 'Процесс',
@@ -57,5 +68,12 @@ export const seriesProcessById: Record<string, SeriesProcess> = {
     images: [],
     variant: 'teaser',
     coverImage: postponedDraftCover,
+  },
+  'outside-the-series': {
+    label: 'Процесс',
+    title: 'Как собиралась серия',
+    text: 'От первого наброска до момента, когда больше уже нечего исправлять',
+    images: outsideTheSeriesDraftImages,
+    variant: 'gallery',
   },
 }

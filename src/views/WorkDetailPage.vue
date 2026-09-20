@@ -20,7 +20,7 @@
 
   <section v-else class="work-detail work-detail--empty">
     <h1>{{ t('works.notFound') }}</h1>
-    <RouterLink to="/works">{{ t('works.allWorks') }}</RouterLink>
+    <RouterLink to="/series">{{ t('series.allSeries') }}</RouterLink>
   </section>
 </template>
 

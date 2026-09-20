@@ -124,7 +124,6 @@ const footerColumns = computed(() => [
   {
     title: t('footer.works'),
     links: [
-      { label: t('footer.catalog'), to: '/works' },
       { label: t('footer.series'), to: '/series' },
     ],
   },
@@ -209,6 +208,7 @@ const footerColumns = computed(() => [
 .app-footer__column-title {
   margin: 0 0 16px;
   font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #151515;

@@ -38,6 +38,12 @@ import almostOutMain from '../assets/pages/series/savedForLater/almostOut/main.p
 import inProgressMain from '../assets/pages/series/savedForLater/inProgress/main.png'
 import settledInMain from '../assets/pages/series/savedForLater/settledIn/main.png'
 import noRushMain from '../assets/pages/series/savedForLater/noRush/main.png'
+import cutToFitMain from '../assets/pages/series/outsideTheSeries/cutToFit/main.png'
+import cutToFitInterior01 from '../assets/pages/series/outsideTheSeries/cutToFit/interior/01.png'
+import cutToFitInterior02 from '../assets/pages/series/outsideTheSeries/cutToFit/interior/02.png'
+import cutToFitInterior03 from '../assets/pages/series/outsideTheSeries/cutToFit/interior/03.png'
+import cutToFitInterior04 from '../assets/pages/series/outsideTheSeries/cutToFit/interior/04.png'
+import holdingItInMain from '../assets/pages/series/outsideTheSeries/holdingItIn/main.png'
 
 export type SeriesWork = {
   id: string
@@ -158,56 +164,6 @@ export const seriesList: Series[] = [
     ],
   },
   {
-    id: 'developer-state',
-    title: 'Developer State',
-    titleRu: 'Состояние: разработчик',
-    label: 'серия',
-    description:
-      'О моменте, когда код становится не только работой, но и способом думать.',
-    status: 'ready',
-    // TODO: заменить на src/assets/pages/series/developerState/banner.png
-    bannerImage: developerStateAbout,
-    concept: [
-      'Работа разработчика редко заканчивается вместе с рабочим днем. Постепенно код перестает быть только инструментом и становится способом воспринимать мир. Проблемы разбиваются на задачи, мысли складываются в алгоритмы, а внутренние состояния начинают ощущаться как режимы системы.',
-      'Серия Developer State исследует, как профессия меняет не только навыки, но и самого человека. Логика, постоянное переключение контекста, поиск ошибок, бесконечные версии и обновления становятся частью личности. Здесь разработчик показан не за компьютером, а в момент, когда цифровое мышление уже встроилось в него самого.',
-      'Это серия о людях, которые пишут код, а со временем начинают мыслить его структурами.',
-    ],
-    detailImages: [],
-    interiorImages: [dsInterior01, dsInterior02, dsInterior03],
-    works: [
-      {
-        id: 'stack-of-thoughts',
-        index: '01',
-        title: 'Stack Of Thoughts',
-        titleRu: 'Стек мыслей',
-        year: '2025',
-        medium: 'Холст, масло',
-        size: '50 × 100 см',
-        image: stackOfThoughts,
-      },
-      {
-        id: 'merge-conflict',
-        index: '02',
-        title: 'Merge Conflict',
-        titleRu: 'Конфликт слияния',
-        year: '2025',
-        medium: 'Холст, масло',
-        size: '50 × 100 см',
-        image: mergeConflict,
-      },
-      {
-        id: 'developer-state',
-        index: '03',
-        title: 'Developer State',
-        titleRu: 'Состояние: разработчик',
-        year: '2026',
-        medium: 'Холст, масло',
-        size: '50 × 100 см',
-        image: developerStateCover,
-      },
-    ],
-  },
-  {
     id: 'postponed-for-later',
     title: 'Postponed For Later',
     titleRu: 'Отложено на потом',
@@ -278,6 +234,100 @@ export const seriesList: Series[] = [
         medium: 'Холст, масло',
         size: '60 × 70 см',
         image: noRushMain,
+      },
+    ],
+  },
+  {
+    id: 'outside-the-series',
+    title: 'Outside the Series',
+    titleRu: 'Вне серии',
+    titleRuLines: ['Вне', 'серии'],
+    label: 'серия',
+    description:
+      'Одиночные работы, каждая со своей историей, состоянием и интонацией.',
+    status: 'ready',
+    concept: [
+      'Не каждая идея хочет становиться серией. Иногда образ появляется очень ясно и существует сам по себе.',
+      'Мне хочется просто его запечатлеть, не придумывая ему продолжение. Здесь собраны такие одиночные работы, каждая со своей историей, состоянием и интонацией.',
+    ],
+    detailImages: [],
+    interiorImages: [],
+    works: [
+      {
+        id: 'cut-to-fit',
+        index: '01',
+        title: 'Cut To Fit',
+        titleRu: 'Подогнать по форме',
+        year: '2026',
+        medium: 'Холст, масло',
+        size: '50 × 60 см',
+        image: cutToFitMain,
+        interiorImages: [
+          cutToFitInterior01,
+          cutToFitInterior02,
+          cutToFitInterior03,
+          cutToFitInterior04,
+        ],
+      },
+      {
+        id: 'holding-it-in',
+        index: '02',
+        title: 'Holding It In',
+        titleRu: 'Держать в себе',
+        year: '2026',
+        medium: 'Холст, масло',
+        size: '40 × 60 см',
+        image: holdingItInMain,
+      },
+    ],
+  },
+  {
+    id: 'developer-state',
+    title: 'Developer State',
+    titleRu: 'Состояние: разработчик',
+    label: 'серия',
+    description:
+      'О моменте, когда код становится не только работой, но и способом думать.',
+    status: 'ready',
+    // TODO: заменить на src/assets/pages/series/developerState/banner.png
+    bannerImage: developerStateAbout,
+    concept: [
+      'Работа разработчика редко заканчивается вместе с рабочим днем. Постепенно код перестает быть только инструментом и становится способом воспринимать мир. Проблемы разбиваются на задачи, мысли складываются в алгоритмы, а внутренние состояния начинают ощущаться как режимы системы.',
+      'Серия Developer State исследует, как профессия меняет не только навыки, но и самого человека. Логика, постоянное переключение контекста, поиск ошибок, бесконечные версии и обновления становятся частью личности. Здесь разработчик показан не за компьютером, а в момент, когда цифровое мышление уже встроилось в него самого.',
+      'Это серия о людях, которые пишут код, а со временем начинают мыслить его структурами.',
+    ],
+    detailImages: [],
+    interiorImages: [dsInterior01, dsInterior02, dsInterior03],
+    works: [
+      {
+        id: 'stack-of-thoughts',
+        index: '01',
+        title: 'Stack Of Thoughts',
+        titleRu: 'Стек мыслей',
+        year: '2025',
+        medium: 'Холст, масло',
+        size: '50 × 100 см',
+        image: stackOfThoughts,
+      },
+      {
+        id: 'merge-conflict',
+        index: '02',
+        title: 'Merge Conflict',
+        titleRu: 'Конфликт слияния',
+        year: '2025',
+        medium: 'Холст, масло',
+        size: '50 × 100 см',
+        image: mergeConflict,
+      },
+      {
+        id: 'developer-state',
+        index: '03',
+        title: 'Developer State',
+        titleRu: 'Состояние: разработчик',
+        year: '2026',
+        medium: 'Холст, масло',
+        size: '50 × 100 см',
+        image: developerStateCover,
       },
     ],
   },

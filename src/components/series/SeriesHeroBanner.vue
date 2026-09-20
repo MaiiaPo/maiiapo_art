@@ -131,11 +131,16 @@
 
       <ul v-else class="series-hero__works">
         <li
-          v-for="work in series.works"
-          :key="work.id"
+          v-for="(work, slotIndex) in displayWorks"
+          :key="work?.id ?? `slot-${slotIndex}`"
           class="series-hero__work"
+          :class="{ 'series-hero__work--empty': !work }"
         >
-          <RouterLink class="series-hero__work-link" :to="workPath(work.id)">
+          <RouterLink
+            v-if="work"
+            class="series-hero__work-link"
+            :to="workPath(work.id)"
+          >
             <div class="series-hero__work-media">
               <LazyImage
                 v-if="work.image"
@@ -161,6 +166,11 @@
 
             <span class="series-hero__work-cta">Смотреть →</span>
           </RouterLink>
+          <div
+            v-else
+            class="series-hero__work-media series-hero__work-media--empty"
+            aria-hidden="true"
+          />
         </li>
       </ul>
     </div>
@@ -170,7 +180,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import type { Series } from '../../data/series'
+import type { Series, SeriesWork } from '../../data/series'
 import { formatSeriesYears } from '../../data/series'
 import { workPath } from '../../data/works'
 import {
@@ -197,6 +207,11 @@ const isFeaturedLayout = computed(
 const featuredWork = computed(() => props.series.works[0])
 const gridWorksTop = computed(() => props.series.works.slice(1, 3))
 const gridWorksBottom = computed(() => props.series.works.slice(3, 5))
+
+/** Always keep 3 slots so the grid doesn't shift when a series has fewer works. */
+const displayWorks = computed((): (SeriesWork | undefined)[] =>
+  [0, 1, 2].map((index) => props.series.works[index]),
+)
 
 const worksMeta = computed(() => {
   const count = props.series.works.length
@@ -325,6 +340,12 @@ function workSub(work: { title: string; titleRu?: string }) {
 .series-hero__works .series-hero__work-placeholder {
   aspect-ratio: auto;
   height: 100%;
+}
+
+.series-hero__works .series-hero__work-media--empty {
+  aspect-ratio: 3 / 4;
+  margin-bottom: 0;
+  background: transparent;
 }
 
 .series-hero__gallery--featured {

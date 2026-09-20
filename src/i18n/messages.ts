@@ -51,7 +51,7 @@ export const messages = {
       heroAria: 'Баннер серии',
       featuredLabel: 'каталог работ',
       featuredTitle: 'Каталог работ',
-      featuredAll: 'Смотреть все работы',
+      featuredAll: 'Смотреть все серии',
       featuredMore: 'Смотреть работу',
       seriesLabel: 'Серия:',
       spotlightLabel: 'о художнице',
@@ -148,11 +148,11 @@ export const messages = {
       practiceText: 'Frontend-разработчик, UX/UI-дизайнер в IT-компании.',
       art: 'Художественная практика и концепция',
       artP1:
-        'Занимаюсь живописью с 2017 года. Работаю с темами цифровой трансформации, идентичности и тела в меняющейся среде.',
+        'Занимаюсь живописью с 2017 года. Работаю с темами цифровой трансформации, идентичности и тела в меняющемся мире.',
       artP2:
-        'Человек в моих работах — изменчивая структура, постоянно адаптирующаяся к информационному шуму, технологиям и необходимости становиться новой версией себя.',
+        'В центре моих работ — человек, который постоянно адаптируется к информационному шуму, технологиям и необходимости меняться вместе с окружающим миром.',
       artP3:
-        'Мой художественный язык сформирован опытом работы в IT и интерфейсах. Мне интересна точка, где логика сталкивается с интуицией, а ошибка или сбой становятся началом нового состояния.',
+        'На мой художественный язык повлиял опыт работы в IT и с интерфейсами. Мне интересно, что происходит на границе логики и интуиции, когда ошибка или сбой становятся началом чего-то нового.',
       quote: 'Живопись для меня — это способ зафиксировать момент трансформации.',
       metaPerm: '1988, Пермь',
       metaMoscow: 'Живу и работаю в Москве',
@@ -228,7 +228,7 @@ export const messages = {
       heroAria: 'Series banner',
       featuredLabel: 'works catalog',
       featuredTitle: 'Works catalog',
-      featuredAll: 'View all works',
+      featuredAll: 'View all series',
       featuredMore: 'View work',
       seriesLabel: 'Series:',
       spotlightLabel: 'about the artist',
@@ -324,11 +324,11 @@ export const messages = {
       practiceText: 'Frontend developer, UX/UI designer at an IT company.',
       art: 'Artistic practice and concept',
       artP1:
-        'I have been painting since 2017. I work with themes of digital transformation, identity, and the body in a changing environment.',
+        'I have been painting since 2017. I work with themes of digital transformation, identity, and the body in a changing world.',
       artP2:
-        'The human in my works is a mutable structure, constantly adapting to information noise, technology, and the need to become a new version of oneself.',
+        'At the center of my work is a person who constantly adapts to information noise, technology, and the need to change along with the surrounding world.',
       artP3:
-        'My visual language is shaped by experience in IT and interfaces. I am interested in the point where logic meets intuition, and an error or glitch becomes the beginning of a new state.',
+        'My artistic language was shaped by experience in IT and with interfaces. I am interested in what happens at the border of logic and intuition, when an error or glitch becomes the beginning of something new.',
       quote: 'Painting for me is a way to capture a moment of transformation.',
       metaPerm: '1988, Perm',
       metaMoscow: 'I live and work in Moscow',

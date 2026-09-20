@@ -33,7 +33,6 @@ const { t } = useI18n()
 const items = computed(() => [
   { label: t('nav.home'), to: '/' },
   { label: t('nav.series'), to: '/series' },
-  { label: t('nav.works'), to: '/works' },
   { label: t('nav.about'), to: '/about' },
   { label: t('nav.contacts'), to: '/contacts' },
 ])

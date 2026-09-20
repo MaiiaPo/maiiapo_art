@@ -8,7 +8,7 @@
           :src="work.image"
           :alt="displayTitle"
           object-fit="contain"
-          object-position="bottom center"
+          object-position="center"
         />
         <div v-else class="work-card__placeholder" aria-hidden="true" />
       </RouterLink>

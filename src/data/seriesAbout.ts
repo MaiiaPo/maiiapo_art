@@ -1,9 +1,11 @@
 import aboutSeriesImage from '../assets/pages/series/theErrorOfTheBeautiful/aboutSeries.png'
 import developerStateAboutImage from '../assets/pages/series/developerState/aboutSeries.png'
 import postponedAboutImage from '../assets/pages/series/savedForLater/aboutSeries.png'
+import outsideTheSeriesAboutImage from '../assets/pages/series/outsideTheSeries/aboutSeries.JPG'
 
 export type SeriesAbout = {
-  image: string
+  /** Если нет — блок «О серии» без левого изображения */
+  image?: string
   imageAlt: string
   label: string
   titleLines: string[]
@@ -60,6 +62,21 @@ export const seriesAboutById: Record<string, SeriesAbout> = {
       'Планы не исчезают,',
       'они ждут статуса',
       '«сейчас».',
+    ],
+  },
+  'outside-the-series': {
+    image: outsideTheSeriesAboutImage,
+    imageAlt: 'Вне серии',
+    label: 'Вне серии',
+    titleLines: ['Не каждая идея', 'хочет становиться', 'серией.'],
+    paragraphs: [
+      'Не каждая идея хочет становиться серией. Иногда образ появляется очень ясно и существует сам по себе.',
+      'Мне хочется просто его запечатлеть, не придумывая ему продолжение. Здесь собраны такие одиночные работы, каждая со своей историей, состоянием и интонацией.',
+    ],
+    quoteLines: [
+      'Не каждая идея',
+      'хочет становиться',
+      'серией.',
     ],
   },
 }

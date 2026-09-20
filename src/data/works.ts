@@ -3,13 +3,12 @@
  *
  * Как добавить картинки на страницу работы:
  * 1. Серия: src/assets/pages/series/{SeriesFolder}/{workFolder}/main.png + detail1.png...
- * 2. Без серии: src/assets/pages/works/{workFolder}/main.JPG + detail1.JPG...
- * 3. Импортируйте main сверху и укажите в поле image
- * 4. detail* подхватятся автоматически (см. workDetailFolderById)
+ * 2. Импортируйте main сверху и укажите в поле image
+ * 3. detail* подхватятся автоматически (см. workDetailFolderById)
  */
 
-import cutToFit from '../assets/pages/works/cutToFit/main.png'
-import holdingItIn from '../assets/pages/works/holdingItIn/main.png'
+import cutToFit from '../assets/pages/series/outsideTheSeries/cutToFit/main.png'
+import holdingItIn from '../assets/pages/series/outsideTheSeries/holdingItIn/main.png'
 import ready from '../assets/pages/series/savedForLater/ready/main.png'
 import almostOut from '../assets/pages/series/savedForLater/almostOut/main.png'
 import inProgress from '../assets/pages/series/savedForLater/inProgress/main.png'
@@ -25,7 +24,7 @@ import { getSeriesById } from './series'
 
 /** detail1, detail2... из папок работ (серии и standalone) */
 const workDetailImages = import.meta.glob(
-  '../assets/pages/{series,works}/**/detail*.{png,PNG,jpg,JPG,jpeg,JPEG}',
+  '../assets/pages/series/**/detail*.{png,PNG,jpg,JPG,jpeg,JPEG}',
   { eager: true, import: 'default' },
 ) as Record<string, string>
 
@@ -45,8 +44,8 @@ const workDetailFolderById: Record<string, string> = {
   'stack-of-thoughts': 'series/developerState/stackOfThoughts',
   'merge-conflict': 'series/developerState/mergeConflict',
   'developer-state': 'series/developerState/developerState',
-  'cut-to-fit': 'works/cutToFit',
-  'holding-it-in': 'works/holdingItIn',
+  'cut-to-fit': 'series/outsideTheSeries/cutToFit',
+  'holding-it-in': 'series/outsideTheSeries/holdingItIn',
 }
 
 function getWorkDetails(workId: string): string[] {
@@ -148,7 +147,7 @@ export const works: Work[] = [
     medium: 'Холст, масло',
     price: 12000,
     status: 'available',
-    seriesId: null,
+    seriesId: 'outside-the-series',
     image: cutToFit,
     description:
       'Иногда мы так стараемся сохранить красивую форму, что не замечаем, как нас начинают подгонять под нее. Тело остается привлекательным, но внутри появляются искажения и несоответствия.',
@@ -163,7 +162,7 @@ export const works: Work[] = [
     medium: 'Холст, масло',
     price: 15000,
     status: 'available',
-    seriesId: null,
+    seriesId: 'outside-the-series',
     image: holdingItIn,
     description:
       'Мы тратим удивительно много сил не на то, чтобы быть красивыми, а на то, чтобы сохранить красоту.',

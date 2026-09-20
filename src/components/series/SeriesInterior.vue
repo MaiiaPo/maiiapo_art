@@ -64,7 +64,7 @@
             fill
             :src="current"
             :alt="imageAlt"
-            object-fit="contain"
+            object-fit="cover"
           />
         </div>
       </div>
@@ -356,11 +356,20 @@ function next() {
   background: #111;
 }
 
-.series-interior__img {
+.series-interior__stage .series-interior__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  background: #111;
+}
+
+.series-interior__img :deep(.lazy-image__media),
+.series-interior__img :deep(.lazy-image__picture) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .series-interior__picker {

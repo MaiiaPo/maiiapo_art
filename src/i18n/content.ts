@@ -9,16 +9,13 @@ import { getSeriesById } from '../data/series'
 const manifestoEn = {
   title: 'Manifesto',
   paragraphs: [
-    'I believe in the right to be yourself without the need to conform.',
-    'Not to be a convenient version.\nNot to fit a given form.\nNot to become more beautiful, clearer, more productive, or more correct only because it is expected of us.',
-    'We live in a world that increasingly tries to define us.',
-    'Algorithms decide what to show us.\nSystems turn life into data.\nSocial roles offer ready-made scripts.\nBeauty standards explain what a body should be.\nSociety still insists especially loudly that women know how much space they are allowed to take, how to look, and how convenient to be.',
-    'I am interested in the moment of resistance.',
-    'When the body steps outside the frame.\nWhen the face stops being an ideal image.\nWhen identity cannot be assembled into one correct version.\nWhen a living being turns out to be more complex than a name, category, or label.',
-    'For me this is not a story of destruction.\nIt is a story of the freedom not to match.',
-    'I speak of self-acceptance not as reconciliation, but as the right to define yourself. Of the female body as a subject, not an object of evaluation. Of imperfection as a sign of the living. Of differences that do not have to be corrected.',
-    'And of humanity in a world that becomes ever more technological.',
-    'I am not against technology. Another question interests me more: what must we not lose as we become digital?',
+    'I believe in the right to be yourself and not conform to other people’s expectations.',
+    'Not to be convenient.\nNot to fit the standards.\nNot to become more beautiful, more correct, or clearer only because that is what is accepted.',
+    'We are constantly being defined: how we should look, what we should want, how we should behave. Especially many of these demands are still placed on women.',
+    'In my work I explore what happens when a person stops conforming to them.',
+    'I am interested in the imperfect body. A face that does not need to be fixed. A person who cannot be described in a single word or role.',
+    'For me, imperfection is not a flaw, but part of being alive.',
+    'And the more technology appears in our lives, the more important this question becomes for me: how do we change with the world and still remain ourselves?',
   ],
 }
 
@@ -70,6 +67,20 @@ const seriesAboutEn: Record<string, Omit<SeriesAbout, 'image'>> = {
       '“now”.',
     ],
   },
+  'outside-the-series': {
+    imageAlt: 'Outside the series',
+    label: 'Outside the series',
+    titleLines: ['Not every idea', 'wants to become', 'a series.'],
+    paragraphs: [
+      'Not every idea wants to become a series. Sometimes an image appears very clearly and exists on its own.',
+      'I simply want to capture it, without inventing a continuation. Here are such single works, each with its own story, state, and tone.',
+    ],
+    quoteLines: [
+      'Not every idea',
+      'wants to become',
+      'a series.',
+    ],
+  },
 }
 
 const seriesConceptEn: Record<string, string[]> = {
@@ -84,6 +95,10 @@ const seriesConceptEn: Record<string, string[]> = {
   'postponed-for-later': [
     'Sometimes readiness turns out not to be a finale, but a pause — a form that has already been assembled, but not yet chosen.',
   ],
+  'outside-the-series': [
+    'Not every idea wants to become a series. Sometimes an image appears very clearly and exists on its own.',
+    'I simply want to capture it, without inventing a continuation. Here are such single works, each with its own story, state, and tone.',
+  ],
 }
 
 const seriesDescriptionEn: Record<string, string> = {
@@ -93,6 +108,8 @@ const seriesDescriptionEn: Record<string, string> = {
     'About how the developer profession becomes a way of thinking and an inner state.',
   'postponed-for-later':
     'About desires, decisions, and versions of the self postponed “for later”.',
+  'outside-the-series':
+    'Single works, each with its own story, state, and tone.',
 }
 
 const workDescriptionsEn: Record<string, string> = {
@@ -169,6 +186,9 @@ export function getSeriesTitleLines(
     }
     if (series.id === 'postponed-for-later') {
       return ['POSTPONED', 'FOR LATER']
+    }
+    if (series.id === 'outside-the-series') {
+      return ['OUTSIDE', 'THE SERIES']
     }
     const mid = Math.ceil(parts.length / 2)
     return [parts.slice(0, mid).join(' '), parts.slice(mid).join(' ')]

@@ -36,6 +36,7 @@ const seriesTitlesRu: Record<string, string> = {
   'the-error-of-being-beautiful': 'Ошибка быть красивой',
   'developer-state': 'Состояние: разработчик',
   'postponed-for-later': 'Отложено на потом',
+  'outside-the-series': 'Вне серии',
 }
 
 const featuredOrder = ['cut-to-fit', 'holding-it-in', 'ready'] as const

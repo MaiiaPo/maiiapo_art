@@ -1,7 +1,10 @@
 <template>
   <section class="series-about" aria-labelledby="series-about-title">
-    <div class="series-about__inner">
-      <div class="series-about__visual">
+    <div
+      class="series-about__inner"
+      :class="{ 'series-about__inner--no-visual': !about.image }"
+    >
+      <div v-if="about.image" class="series-about__visual">
         <LazyImage
           class="series-about__img"
           fill
@@ -69,6 +72,10 @@ defineProps<{
   align-items: stretch;
   max-width: 1200px;
   margin-inline: auto;
+}
+
+.series-about__inner--no-visual {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .series-about__visual {

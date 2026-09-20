@@ -90,18 +90,26 @@ const crumbs = computed<Crumb[]>(() => {
       ]
     }
     case 'works':
-      return [{ label: t('breadcrumbs.works') }]
+      return [{ label: t('breadcrumbs.series'), to: '/series' }]
     case 'work-detail': {
       const id = route.params.id
       const work = typeof id === 'string' ? getWorkById(id) : undefined
-      return [
-        { label: t('breadcrumbs.works'), to: '/works' },
-        {
-          label: work
-            ? getWorkDisplayTitle(work, locale.value)
-            : t('breadcrumbs.workFallback'),
-        },
+      const series = work?.seriesId ? getSeriesById(work.seriesId) : undefined
+      const crumbs: Crumb[] = [
+        { label: t('breadcrumbs.series'), to: '/series' },
       ]
+      if (series) {
+        crumbs.push({
+          label: getSeriesDisplayTitle(series, locale.value),
+          to: `/series/${series.id}`,
+        })
+      }
+      crumbs.push({
+        label: work
+          ? getWorkDisplayTitle(work, locale.value)
+          : t('breadcrumbs.workFallback'),
+      })
+      return crumbs
     }
     case 'about':
       return [{ label: t('breadcrumbs.about') }]

@@ -43,6 +43,7 @@
                 v-for="(work, thumbIndex) in previewWorks(item)"
                 :key="`${item.id}-${thumbIndex}`"
                 class="series-list__thumb-wrap"
+                :class="{ 'series-list__thumb-wrap--empty': !work?.image }"
               >
                 <LazyImage
                   v-if="work?.image"
@@ -52,7 +53,6 @@
                   :alt="work.title"
                   object-fit="contain"
                 />
-                <div v-else class="series-list__thumb series-list__thumb--empty" />
               </li>
             </ul>
 
@@ -304,15 +304,14 @@ function previewWorks(series: Series): (SeriesWork | undefined)[] {
   background: #e8e8e8;
 }
 
+.series-list__thumb-wrap--empty {
+  padding: 0;
+  background: transparent;
+}
+
 .series-list__thumb {
   width: 100%;
   height: 100%;
-}
-
-.series-list__thumb--empty {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(160deg, #dcdcdc 0%, #c4c4c4 55%, #b0b0b0 100%);
 }
 
 .series-list__aside {

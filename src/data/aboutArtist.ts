@@ -19,8 +19,8 @@ export const aboutArtist = {
     },
     {
       label: 'Telegram',
-      value: '@maiiapo',
-      href: 'https://t.me/maiiapo',
+      value: '@maiiapoart',
+      href: 'https://t.me/maiiapoart',
     },
     {
       label: 'Instagram',
