@@ -1,11 +1,23 @@
-const CONTACT_EMAIL = 'maiiapoart@gmail.com'
-const CONTACT_SUBJECT = 'Вам отправлен контакт для связи с сайта maiiapo.com'
-const ORDER_SUBJECT = 'Заказ работы с сайта maiiapo.com'
-
 export type SiteContactPayload = {
   contact: string
   workTitle?: string
   workId?: string
+}
+
+/**
+ * Отправка заявок через свой /api/contact (Vercel).
+ * Браузер в РФ не ходит на formsubmit.co напрямую — его часто режут.
+ * С .art тоже бьём в API на .com (CORS разрешён).
+ */
+function getContactEndpoint(): string {
+  if (typeof window === 'undefined') return '/api/contact'
+
+  const host = window.location.hostname.toLowerCase()
+  if (host === 'maiiapo.art' || host === 'www.maiiapo.art') {
+    return 'https://www.maiiapo.com/api/contact'
+  }
+
+  return '/api/contact'
 }
 
 export async function sendSiteContact(
@@ -17,32 +29,22 @@ export async function sendSiteContact(
       : contactOrPayload
 
   const contact = payload.contact.trim()
-  const isOrder = Boolean(payload.workTitle || payload.workId)
+  if (!contact) {
+    throw new Error('Не удалось отправить сообщение')
+  }
 
-  const lines = [
-    isOrder ? 'Запрос на заказ работы с сайта maiiapo.com' : 'Контакт с сайта maiiapo.com',
-    '',
-    payload.workTitle ? `Работа: ${payload.workTitle}` : null,
-    payload.workId ? `ID: ${payload.workId}` : null,
-    `Контакт: ${contact}`,
-  ].filter((line): line is string => line !== null)
-
-  const response = await fetch(
-    `https://formsubmit.co/ajax/${encodeURIComponent(CONTACT_EMAIL)}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        _subject: isOrder ? ORDER_SUBJECT : CONTACT_SUBJECT,
-        _captcha: 'false',
-        _template: 'box',
-        message: lines.join('\n'),
-      }),
+  const response = await fetch(getContactEndpoint(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
-  )
+    body: JSON.stringify({
+      contact,
+      workTitle: payload.workTitle,
+      workId: payload.workId,
+    }),
+  })
 
   if (!response.ok) {
     throw new Error('Не удалось отправить сообщение')
