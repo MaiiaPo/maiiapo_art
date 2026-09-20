@@ -32,13 +32,26 @@ function setCors(res: VercelResponse, origin: string | undefined) {
     res.setHeader('Access-Control-Allow-Origin', origin)
     res.setHeader('Vary', 'Origin')
   }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept')
+  res.setHeader('Access-Control-Max-Age', '86400')
 }
 
 function asString(value: unknown, max = 500): string {
   if (typeof value !== 'string') return ''
   return value.trim().slice(0, max)
+}
+
+function readBody(req: VercelRequest): ContactBody {
+  if (!req.body) return {}
+  if (typeof req.body === 'string') {
+    try {
+      return JSON.parse(req.body) as ContactBody
+    } catch {
+      return {}
+    }
+  }
+  return req.body as ContactBody
 }
 
 async function sendViaTelegram(text: string): Promise<boolean> {
@@ -57,8 +70,7 @@ async function sendViaTelegram(text: string): Promise<boolean> {
   })
 
   if (!response.ok) {
-    const raw = await response.text()
-    console.error('Telegram error', response.status, raw.slice(0, 300))
+    console.error('Telegram error', response.status, (await response.text()).slice(0, 300))
     return false
   }
 
@@ -86,26 +98,72 @@ async function sendViaGmail(subject: string, text: string, replyTo?: string): Pr
   return true
 }
 
+/** Запасной канал, если SMTP/Telegram ещё не настроены */
+async function sendViaFormSubmit(
+  subject: string,
+  text: string,
+  replyTo?: string,
+): Promise<boolean> {
+  const response = await fetch(
+    `https://formsubmit.co/ajax/${encodeURIComponent(TO_EMAIL)}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        name: 'maiiapo.site',
+        email: replyTo || 'noreply@maiiapo.com',
+        _replyto: replyTo,
+        _subject: subject,
+        _captcha: 'false',
+        _template: 'box',
+        message: text,
+      }),
+    },
+  )
+
+  const raw = await response.text()
+  try {
+    const parsed = JSON.parse(raw) as { success?: unknown }
+    return Boolean(response.ok && parsed.success)
+  } catch {
+    console.error('FormSubmit error', response.status, raw.slice(0, 300))
+    return false
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined
   setCors(res, origin)
 
-  if (req.method === 'OPTIONS') {
+  const method = (req.method || 'GET').toUpperCase()
+
+  // Preflight с maiiapo.art
+  if (method === 'OPTIONS') {
     return res.status(204).end()
   }
 
-  if (req.method !== 'POST') {
+  // Удобно проверить, что функция жива
+  if (method === 'GET') {
+    return res.status(200).json({
+      success: true,
+      ok: true,
+      service: 'contact',
+    })
+  }
+
+  if (method !== 'POST') {
+    res.setHeader('Allow', 'GET, POST, OPTIONS')
     return res.status(405).json({ success: false, error: 'Method not allowed' })
   }
 
   try {
-    const body = (
-      typeof req.body === 'string' ? JSON.parse(req.body) : req.body
-    ) as ContactBody
-
-    const contact = asString(body?.contact, 300)
-    const workTitle = asString(body?.workTitle, 200)
-    const workId = asString(body?.workId, 80)
+    const body = readBody(req)
+    const contact = asString(body.contact, 300)
+    const workTitle = asString(body.workTitle, 200)
+    const workId = asString(body.workId, 80)
 
     if (!contact) {
       return res.status(400).json({ success: false, error: 'Contact is required' })
@@ -123,9 +181,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ].filter((line): line is string => line !== null)
 
     const text = lines.join('\n')
-    const emailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)
-      ? contact
-      : undefined
+    const replyTo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) ? contact : undefined
 
     let sent = false
 
@@ -136,18 +192,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-      if (await sendViaGmail(subject, text, emailLike)) sent = true
+      if (await sendViaGmail(subject, text, replyTo)) sent = true
     } catch (error) {
       console.error('Gmail error', error)
     }
 
     if (!sent) {
-      console.error('No mail transport configured or all failed', {
-        hasTelegram: Boolean(
-          process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID,
-        ),
-        hasGmail: Boolean(process.env.GMAIL_APP_PASSWORD),
-      })
+      try {
+        if (await sendViaFormSubmit(subject, text, replyTo)) sent = true
+      } catch (error) {
+        console.error('FormSubmit error', error)
+      }
+    }
+
+    if (!sent) {
       return res.status(503).json({
         success: false,
         error: 'Mail transport is not configured',

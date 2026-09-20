@@ -5,8 +5,9 @@ export type SiteContactPayload = {
 }
 
 /**
- * Заявки всегда уходят на API Vercel (www.maiiapo.com).
- * На maiiapo.art своего backend нет — только статика на reg.ru.
+ * Заявки всегда на API Vercel (www.maiiapo.com).
+ * На maiiapo.art backend нет — шлём кросс-доменом.
+ * URLSearchParams = простой CORS-запрос без preflight OPTIONS.
  */
 function getContactEndpoint(): string {
   if (typeof window === 'undefined') {
@@ -18,7 +19,6 @@ function getContactEndpoint(): string {
     return '/api/contact'
   }
 
-  // И .com, и .art бьют в один рабочий endpoint на Vercel
   return 'https://www.maiiapo.com/api/contact'
 }
 
@@ -35,27 +35,27 @@ export async function sendSiteContact(
     throw new Error('Не удалось отправить сообщение')
   }
 
+  const body = new URLSearchParams()
+  body.set('contact', contact)
+  if (payload.workTitle) body.set('workTitle', payload.workTitle)
+  if (payload.workId) body.set('workId', payload.workId)
+
   const response = await fetch(getContactEndpoint(), {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
     },
-    body: JSON.stringify({
-      contact,
-      workTitle: payload.workTitle,
-      workId: payload.workId,
-    }),
+    body,
   })
 
-  let result: { success?: string | boolean } = {}
+  let result: { success?: string | boolean; error?: string } = {}
   try {
-    result = (await response.json()) as { success?: string | boolean }
+    result = (await response.json()) as typeof result
   } catch {
     throw new Error('Не удалось отправить сообщение')
   }
 
   if (!response.ok || !result.success) {
-    throw new Error('Не удалось отправить сообщение')
+    throw new Error(result.error || 'Не удалось отправить сообщение')
   }
 }
