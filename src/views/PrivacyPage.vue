@@ -1,11 +1,14 @@
 <template>
   <LegalDocumentView
-    :document="privacyPolicy"
+    :document="legalDocument"
     title-id="privacy-page-title"
   />
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import LegalDocumentView from '../components/legal/LegalDocumentView.vue'
-import { privacyPolicy } from '../data/legal'
+import { privacyPolicy, withLegalSiteUrl } from '../data/legal'
+
+const legalDocument = computed(() => withLegalSiteUrl(privacyPolicy))
 </script>

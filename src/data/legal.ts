@@ -18,6 +18,41 @@ export const legalOperator = {
   revisedAt: '15.09.2026',
 }
 
+const ART_HOSTS = new Set(['maiiapo.art', 'www.maiiapo.art'])
+
+/** URL сайта в документах: на .art — maiiapo.art, иначе maiiapo.com. */
+export function getLegalSiteUrl(
+  hostname = typeof window !== 'undefined' ? window.location.hostname : '',
+): string {
+  return ART_HOSTS.has(hostname.toLowerCase())
+    ? 'https://maiiapo.art'
+    : legalOperator.siteUrl
+}
+
+export function withLegalSiteUrl(
+  document: LegalDocument,
+  siteUrl = getLegalSiteUrl(),
+): LegalDocument {
+  const from = legalOperator.siteUrl
+  if (!siteUrl || siteUrl === from) return document
+
+  return {
+    ...document,
+    blocks: document.blocks.map((block) => {
+      if (block.type === 'p') {
+        return { ...block, text: block.text.split(from).join(siteUrl) }
+      }
+      if (block.type === 'list') {
+        return {
+          ...block,
+          items: block.items.map((item) => item.split(from).join(siteUrl)),
+        }
+      }
+      return block
+    }),
+  }
+}
+
 export const privacyPolicy: LegalDocument = {
   title: 'Политика в отношении обработки персональных данных',
   revisedAt: legalOperator.revisedAt,
